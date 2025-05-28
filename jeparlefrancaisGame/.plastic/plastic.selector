@@ -1,0 +1,4 @@
+repository "jeparlefrancaisGame/jeparlefrancaisGame@18968286558499@cloud"
+  path "/"
+    br "/main"
+    co "/main"
