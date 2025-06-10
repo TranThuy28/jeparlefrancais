@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: b0853ca954422c848947d30fc70056d2
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Raleway Light
+  fontNames:
+  - Raleway Light
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 997e75c59a4d54a40a27df1300c69b91, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
