@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ed65047a7aad40a46a94fabf542380a5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 199781
+  packageName: LOWPOLY - Universal Character (Modular)
+  packageVersion: 1.0
+  assetPath: Assets/AA_UniversalCharacter/Scripts/CustomButton.cs
+  uploadId: 475405
