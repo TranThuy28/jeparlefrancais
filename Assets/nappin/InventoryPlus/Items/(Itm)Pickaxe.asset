@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)Pickaxe
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 7fea2a1ca0fd1fb48be3824a594b92ee, type: 3}
+  itemName: Pickaxe
+  itemID: com.pickaxe.id
+  itemCategory: Tool
+  isStackable: 0
+  stackSize: 16
+  isDurable: 1
+  maxDurability: 100
+  usageCost: 1
+  hasDamagedSprites: 1
+  damagedSprites:
+  - {fileID: 21300000, guid: ba2e1e2d43410aa43871883098a86e89, type: 3}
+  - {fileID: 21300000, guid: 47b6853ac784ef249862826c7e4b3dbf, type: 3}
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: 3 DMG
+  itemDescription: 'The trusty pickaxe is a versatile tool with a multitude of uses.
+    From mining precious ores to chopping down trees and breaking through tough terrain,
+    this tool can handle any task. With its sturdy handle and sharp blade, the pickaxe
+    is a reliable companion for adventurers and miners alike. '
+  itemRarity: 0
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 93151123222e78f4eac7b46f67e843a2, type: 3}
+  equipAudio: {fileID: 0}

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97f6a039a89f6e04fb3d1b4eb8561e94, type: 3}
+  m_Name: flowers
+  m_EditorClassIdentifier: 
+  itemName: flowers
+  itemNameEnglish: flowers
+  description: lil cute flowers :>
+  itemType: 0
+  rarity: 0
+  region: 1
+  itemPrefab: {fileID: 1137386124236914, guid: 56efd4d892173624daa8715a29e463b8, type: 3}
+  icon: {fileID: 5445961698780662350, guid: c9adb1f542a93ae489bacfeae21e8394, type: 2}
+  maxStackSize: 99
+  isConsumable: 0
+  value: 0
+  defense: 0
+  coldResistance: 0
+  luck: 0
+  charm: 0
+  hpRestore: 0
+  manaRestore: 0

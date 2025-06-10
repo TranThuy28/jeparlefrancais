@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)Pearl
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: dc6e0410341329743a563d5ae5471f28, type: 3}
+  itemName: Pearl
+  itemID: com.pearl.id
+  itemCategory: Material
+  isStackable: 1
+  stackSize: 16
+  isDurable: 0
+  maxDurability: 100
+  usageCost: 10
+  hasDamagedSprites: 0
+  damagedSprites: []
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: Use to open mystic gates
+  itemDescription: The mysterious pearl is a rare and enigmatic object with a captivating
+    aura. Its smooth, iridescent surface seems to glow with an inner light, and its
+    unique properties have made it the object of much fascination and speculation.
+    Whether you seek its secrets or simply appreciate its beauty, the mysterious
+    pearl is a treasure unlike any other.
+  itemRarity: 2
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 64ddb265d5d2b1143835b635ddc7de52, type: 3}
+  equipAudio: {fileID: 0}

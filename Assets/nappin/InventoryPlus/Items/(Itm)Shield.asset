@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)Shield
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 90c035a5ad275e84ca416f5d4e0162d9, type: 3}
+  itemName: Cursed Shield
+  itemID: com.cursed_shield.id
+  itemCategory: Armor
+  isStackable: 0
+  stackSize: 16
+  isDurable: 1
+  maxDurability: 100
+  usageCost: 1
+  hasDamagedSprites: 0
+  damagedSprites: []
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: -5 DMG Resistence
+  itemDescription: The cursed shield is a malevolent piece of armor that amplifies
+    the damage received by its wearer. Despite its ominous appearance and sinister
+    power, some adventurers still seek its protection, drawn to its dark allure.
+    However, those who wield this shield must be prepared to suffer the consequences
+    of its curse, as they face amplified attacks and endure greater harm in battle.
+  itemRarity: 2
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 1cb0d972bb85c0248bb9c5cdd0894b1a, type: 3}
+  equipAudio: {fileID: 8300000, guid: aa518f2fee5e73a4e89423c37ddb19d2, type: 3}

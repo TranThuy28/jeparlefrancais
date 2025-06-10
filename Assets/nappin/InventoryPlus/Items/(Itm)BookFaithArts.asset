@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)BookFaithArts
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: ef1317692b661354bac41ce9adaf783d, type: 3}
+  itemName: Faith Arts
+  itemID: com.book_faith_arts.id
+  itemCategory: Magic
+  isStackable: 0
+  stackSize: 16
+  isDurable: 0
+  maxDurability: 100
+  usageCost: 10
+  hasDamagedSprites: 0
+  damagedSprites: []
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: Use to learn Enchantment
+  itemDescription: This volume holds secrets of belief and devotion, and those who
+    seek its power must be ready to harness the power of their hearts and minds.
+    Whether you're mastering the art of devotion or simply seeking to deepen your
+    connection with the divine, the book of the faith arts is a valuable tool.
+  itemRarity: 1
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 37979b26b25dd1845bfd2d2117e820af, type: 3}
+  equipAudio: {fileID: 8300000, guid: 1fa476614c5ec9d4e8bbd1245a3516f3, type: 3}

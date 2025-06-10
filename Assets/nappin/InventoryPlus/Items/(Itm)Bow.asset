@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)Bow
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 7718543f39921fe43915f3287a653d79, type: 3}
+  itemName: Bow
+  itemID: com.bow.id
+  itemCategory: Tool
+  isStackable: 0
+  stackSize: 16
+  isDurable: 1
+  maxDurability: 100
+  usageCost: 1
+  hasDamagedSprites: 0
+  damagedSprites: []
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: +2 Aim
+  itemDescription: With its straightforward design and ease of use, this bow is the
+    perfect choice for archers of all skill levels. Whether you're hunting game or
+    battling enemies, the simple bow will help you hit your mark with accuracy and
+    precision.
+  itemRarity: 0
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 93151123222e78f4eac7b46f67e843a2, type: 3}
+  equipAudio: {fileID: 0}

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)ChestPlate
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 44e171b922942054cbb1ecede3b7c6a5, type: 3}
+  itemName: Chest Plate
+  itemID: com.chest_plate.id
+  itemCategory: Armor_ChestPlate
+  isStackable: 0
+  stackSize: 16
+  isDurable: 1
+  maxDurability: 100
+  usageCost: 1
+  hasDamagedSprites: 0
+  damagedSprites: []
+  hasCooldown: 0
+  itemCooldown: 1
+  itemAttribute: +30 DMG Resistence
+  itemDescription: With its unique features and powerful enhancements, this chestplate
+    provides superior protection and versatility. Whether you're battling fearsome
+    monsters or exploring dangerous terrain, the special chestplate will help you
+    stay safe and ready for action. So, equip yourself with this exceptional armor
+    and get ready to take on any challenge with confidence.
+  itemRarity: 1
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 8300000, guid: 1cb0d972bb85c0248bb9c5cdd0894b1a, type: 3}
+  equipAudio: {fileID: 8300000, guid: aa518f2fee5e73a4e89423c37ddb19d2, type: 3}
