@@ -194,7 +194,7 @@ public class ScratchCardGame : MonoBehaviour
         
         if (gameOverText != null)
         {
-            gameOverText.text = "🎉 Chúc mừng! Bạn đã cào hết tuyết! 🎉";
+            gameOverText.text = "Félicitations ! Le passage est terminé.";
             gameOverText.gameObject.SetActive(true);
         }
         
