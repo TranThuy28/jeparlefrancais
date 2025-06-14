@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Models/Props/close_button.png.meta
 guid: 4a4a4d3d73c616d47a06661e735967a6
+========
+guid: bb31b3ef2372e8245baac5ef9631c0e8
+>>>>>>>> 903c0a200009df0c663d7a5dfbb1b3db9d076b22:Assets/Prefabs/game/494870633_734037599128880_6580779978923708978_n.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -49,7 +53,11 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
+<<<<<<<< HEAD:Assets/Models/Props/close_button.png.meta
   spriteBorder: {x: 31, y: 32, z: 32, w: 32}
+========
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+>>>>>>>> 903c0a200009df0c663d7a5dfbb1b3db9d076b22:Assets/Prefabs/game/494870633_734037599128880_6580779978923708978_n.png.meta
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -83,6 +91,7 @@ TextureImporter:
   - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
+<<<<<<<< HEAD:Assets/Models/Props/close_button.png.meta
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -96,6 +105,8 @@ TextureImporter:
   - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
+========
+>>>>>>>> 903c0a200009df0c663d7a5dfbb1b3db9d076b22:Assets/Prefabs/game/494870633_734037599128880_6580779978923708978_n.png.meta
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
