@@ -353,7 +353,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &477416389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,10 +375,10 @@ MonoBehaviour:
   mouseSprite: {fileID: 21300000, guid: 13368b4365a818c44b298b154b0b003f, type: 3}
   mouseSize: {x: 400, y: 400}
   gameTime: 30
-  mouseSpawnRate: 2
+  mouseSpawnRate: 1
   scorePerMouse: 10
   maxMice: 8
-  difficultyIncrease: 0.5
+  difficultyIncrease: 0
 --- !u!114 &477416390
 MonoBehaviour:
   m_ObjectHideFlags: 0
