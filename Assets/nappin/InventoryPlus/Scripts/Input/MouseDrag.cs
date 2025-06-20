@@ -31,10 +31,11 @@ namespace InventoryPlus
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            Debug.Log("OnBeginDrag called on " + UISlot.name);
             inventory.SwapItem(UISlot);
 
             //instanciate dragged object preview
-            if(UISlot.GetIsShown())
+            if (UISlot.GetIsShown())
             {
                 dragInstance = new GameObject();
                 dragInstance.name = "Drag Image: " + UISlot.name;

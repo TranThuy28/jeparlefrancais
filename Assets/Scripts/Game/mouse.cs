@@ -189,6 +189,7 @@ public class MouseCatchingMinigame : MonoBehaviour
         while (elapsedTime < duration)
         {
             float scale = Mathf.Lerp(0f, 1f, elapsedTime / duration);
+            if(mouseObj == null) yield break;
             mouseObj.transform.localScale = originalScale * scale;
             elapsedTime += Time.unscaledDeltaTime;
             yield return null;

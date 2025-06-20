@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+    using System.Linq;
+    using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -19,13 +21,13 @@ namespace InventoryPlus
         [SerializeField] public bool enableMouseDrag = true;
 
         [SerializeField] public Animator anim;
-        
+
         [SerializeField] public bool instanciatePickuppableOnDrop = false;
         [SerializeField] public GameObject pickupPrefab;
         [SerializeField] public GameObject player;
 
         [SerializeField] public AudioSource itemsAudio;
-        [SerializeField] public AudioSource sortAudio;        
+        [SerializeField] public AudioSource sortAudio;
         [SerializeField] public AudioSource swapAudio;
 
         [SerializeField] public bool enableDebug;
@@ -44,7 +46,7 @@ namespace InventoryPlus
         private void Update()
         {
             // Sử dụng Input System mới để kiểm tra phím I
-            if (UnityEngine.InputSystem.Keyboard.current != null && 
+            if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
             {
                 ToggleInventory();
@@ -56,13 +58,18 @@ namespace InventoryPlus
         {
             isInventoryOpen = !isInventoryOpen;
             ShowInventory(isInventoryOpen);
-            
-            if (enableDebug) 
+
+            if (enableDebug)
             {
                 Debug.Log("Inventory " + (isInventoryOpen ? "opened" : "closed"));
             }
         }
 
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Debug.Log("OnPointerClick called on " + " at position: " + eventData.position);
+
+        }
 
         #region Setup
 
@@ -70,7 +77,7 @@ namespace InventoryPlus
         {
             if (!wasLoaded)
             {
-                AssignHotbarSlots();
+                //AssignHotbarSlots();
                 AssignInventorySlots();
 
                 AddStartingInventory();
@@ -116,7 +123,7 @@ namespace InventoryPlus
                 UISlots.Add(inventoryUISlots[i]);
                 slots.Add(null);
 
-                if(enableMouseDrag) inventoryUISlots[i].SetupMouseDrag(this);
+                if (enableMouseDrag) inventoryUISlots[i].SetupMouseDrag(this);
                 inventoryUISlots[i].SetupUISlot(this);
             }
         }
@@ -156,7 +163,7 @@ namespace InventoryPlus
 
         public void AddInventory(Item _itemType, int _itemNum, float _itemDurability, bool _forceDisableNotification)
         {
-            if(_itemType != null && _itemNum > 0)
+            if (_itemType != null && _itemNum > 0)
             {
                 if (!_itemType.isStackable) AddNotStackable(_itemType, _itemNum, _itemDurability, _forceDisableNotification);
                 else AddStackable(_itemType, _itemNum, _forceDisableNotification);
@@ -216,8 +223,6 @@ namespace InventoryPlus
             if (_forceDisableNotification) notificationDisplay = false;
 
             int remainingNum = _itemNum;
-
-
             //fill already partially filled slots
             for (int i = 0; i < slots.Count; i++)
             {
@@ -229,7 +234,6 @@ namespace InventoryPlus
                     {
                         slots[i].AddItemNum(remainingNum);
                         UISlots[i].UpdateUI(slots[i], showDurabilityValues, notificationDisplay);
-
                         remainingNum = 0;
                         break;
                     }
@@ -251,11 +255,11 @@ namespace InventoryPlus
                 {
                     for (int i = 0; i < slots.Count; i++)
                     {
+
                         if ((slots[i] == null && remainingNum > _itemType.stackSize) && UISlots[i].restrictedToCategory && _itemType.itemCategory == UISlots[i].categoryName)
                         {
                             slots[i] = new ItemSlot(_itemType, _itemType.stackSize, 1f);
                             UISlots[i].UpdateUI(slots[i], showDurabilityValues, false);
-
                             remainingNum -= _itemType.stackSize;
                         }
                         else if ((slots[i] == null && remainingNum <= _itemType.stackSize) && UISlots[i].restrictedToCategory && _itemType.itemCategory == UISlots[i].categoryName)
@@ -399,7 +403,7 @@ namespace InventoryPlus
                 }
             }
 
-            if(enableDebug) Debug.Log("Removed " + remainingNum + " from the inventory");
+            if (enableDebug) Debug.Log("Removed " + remainingNum + " from the inventory");
         }
 
 
@@ -486,7 +490,7 @@ namespace InventoryPlus
                     else isItemUsable = false;
                 }
 
-                if(isItemUsable)
+                if (isItemUsable)
                 {
                     if (itemsAudio != null && slot.GetItemType().useAudio != null) PlayItemsAudio(slot.GetItemType().useAudio);
                     if (enableDebug) Debug.Log("Used " + slot.GetItemType().itemName);
@@ -544,7 +548,7 @@ namespace InventoryPlus
             }
 
             if (equippedSelected && itemsAudio != null && slot.GetItemType().equipAudio != null) PlayItemsAudio(slot.GetItemType().equipAudio);
-            
+
             if (enableDebug)
             {
                 if (equippedSelected) Debug.Log("Equipped selected slot");
@@ -571,7 +575,7 @@ namespace InventoryPlus
                 swapUISlot = _UIInventorySlot;
                 _UIInventorySlot.SetSwapState(true);
             }
-            else if(_UIInventorySlot == swapUISlot)
+            else if (_UIInventorySlot == swapUISlot)
             {
                 swapUISlot = null;
                 _UIInventorySlot.SetSwapState(false);
@@ -595,7 +599,7 @@ namespace InventoryPlus
                     if (itemSlot_2 != null) _UIInventorySlot.UpdateUI(itemSlot_2, showDurabilityValues, false);
                     else _UIInventorySlot.ShowUI(false);
                 }
-                
+
                 //attempt swap
                 else
                 {
@@ -691,16 +695,16 @@ namespace InventoryPlus
 
         public void ShowInventory(bool _show)
         {
-            if(_show) anim.Rebind();
+            if (_show) anim.Rebind();
 
             //handle pickuppable instances
-            if (instanciatePickuppableOnDrop && dropList.Count > 0)
-            {
-                GameObject instObj = GameObject.Instantiate(pickupPrefab, player.transform.position, Quaternion.identity);
-                instObj.GetComponent<PickUp>().ManageDrop(dropList, false);
+            // if (instanciatePickuppableOnDrop && dropList.Count > 0)
+            // {
+            //     GameObject instObj = GameObject.Instantiate(pickupPrefab, player.transform.position, Quaternion.identity);
+            //     instObj.GetComponent<PickUp>().ManageDrop(dropList, false);
 
-                dropList.Clear();
-            }
+            //     dropList.Clear();
+            // }
 
             anim.SetBool("Show", _show);
             anim.SetBool("hasChest", inChestRange);
