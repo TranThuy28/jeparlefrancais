@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-    using System.Linq;
-    using UnityEngine;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -13,6 +13,8 @@ namespace InventoryPlus
         [SerializeField] public List<ItemSlot> inventoryItems;
         [SerializeField] public List<UISlot> inventoryUISlots;
         [SerializeField] public bool hasHotbar = false;
+        [SerializeField] public bool inTask = true;
+        
         [SerializeField] public List<UISlot> hotbarUISlots;
 
         [SerializeField] public bool displayNotificationOnNewItems;
@@ -58,7 +60,13 @@ namespace InventoryPlus
         {
             isInventoryOpen = !isInventoryOpen;
             ShowInventory(isInventoryOpen);
-
+            ShowHotbar(isInventoryOpen);
+            if (isInventoryOpen)
+            {
+                // Clear any swap state when opening inventory
+                ClearSwap();
+                SelectFirstInventorySlot();
+            }
             if (enableDebug)
             {
                 Debug.Log("Inventory " + (isInventoryOpen ? "opened" : "closed"));
@@ -68,7 +76,6 @@ namespace InventoryPlus
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("OnPointerClick called on " + " at position: " + eventData.position);
-
         }
 
         #region Setup
@@ -77,12 +84,13 @@ namespace InventoryPlus
         {
             if (!wasLoaded)
             {
-                //AssignHotbarSlots();
                 AssignInventorySlots();
+                AssignHotbarSlots();
 
                 AddStartingInventory();
             }
             ShowInventory(false);
+            ShowHotbar(false);
         }
 
 
@@ -113,6 +121,18 @@ namespace InventoryPlus
 
             wasLoaded = true;
             if (enableDebug) Debug.Log("Inventory loaded");
+        }
+        
+        public void ShowHotbar(bool _show)
+        {
+            Debug.Log("ShowHotbar called with _show: " + _show);
+            if (hasHotbar)
+            {
+                for (int i = 0; i < hotbarUISlots.Count; i++)
+                {
+                    hotbarUISlots[i].gameObject.SetActive(_show);
+                }
+            }
         }
 
 
@@ -708,6 +728,7 @@ namespace InventoryPlus
 
             anim.SetBool("Show", _show);
             anim.SetBool("hasChest", inChestRange);
+            anim.SetBool("inTask", inTask);
         }
 
 

@@ -51,8 +51,8 @@ namespace InventoryPlus
         {
             inputModule = this.GetComponent<StandaloneInputModule>();
             eventSystem = this.GetComponent<EventSystem>();
-
-            //set initial state
+            Debug.Log("InputReader Awake - EventSystem: " + (eventSystem != null ? "Found" : "Not Found") + 
+                    ", InputModule: " + (inputModule != null ? "Found" : "Not Found"));
             inputModule.horizontalAxis = InventoryOffHorizontalInput;
             inventory.SelectFirstHotbarSlot();
             inventory.ClearSwap();
@@ -74,6 +74,7 @@ namespace InventoryPlus
 
         public void UpdateSelection()
         {
+//            Debug.Log("UpdateSelection called");
             GameObject tmpObj = currentSelectedObj;
 
             //handle selection when no GameObject are selected
@@ -98,7 +99,7 @@ namespace InventoryPlus
                 inventoryOn = !inventoryOn;
 
                 ShowCursor(inventoryOn);
-                player.EnableController(!inventoryOn);
+//                player.EnableController(!inventoryOn);
                 inventory.ShowInventory(inventoryOn);
                 inventory.ForceEndSwap();
 
