@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,10 +13,12 @@ namespace InventoryPlus
     {
         [SerializeField] public List<ItemSlot> inventoryItems;
         [SerializeField] public List<UISlot> inventoryUISlots;
+
         [SerializeField] public bool hasHotbar = false;
-        [SerializeField] public bool inTask = true;
+        [SerializeField] public bool inTask = false;
         
         [SerializeField] public List<UISlot> hotbarUISlots;
+        [SerializeField] public GameObject missionBtn;
 
         [SerializeField] public bool displayNotificationOnNewItems;
         [SerializeField] public bool showDurabilityValues = false;
@@ -51,7 +54,20 @@ namespace InventoryPlus
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
             {
+                inTask = false;
+                anim.SetBool("inTask", inTask);
                 ToggleInventory();
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current != null &&
+                UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame)
+            {
+                inTask = !inTask;
+                isInventoryOpen = true;
+
+                ToggleInventory();
+                anim.SetBool("inTask", inTask);
+                Debug.Log("Mission button clicked, inTask is now: " + inTask);
             }
         }
 
@@ -73,11 +89,6 @@ namespace InventoryPlus
             }
         }
 
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            Debug.Log("OnPointerClick called on " + " at position: " + eventData.position);
-        }
-
         #region Setup
 
         private void Start()
@@ -87,6 +98,7 @@ namespace InventoryPlus
                 AssignInventorySlots();
                 AssignHotbarSlots();
 
+                SetupMissionBtnClickHandler();
                 AddStartingInventory();
             }
             ShowInventory(false);
@@ -132,6 +144,44 @@ namespace InventoryPlus
                 {
                     hotbarUISlots[i].gameObject.SetActive(_show);
                 }
+            }
+        }
+    
+
+        private void SetupMissionBtnClickHandler()
+        {     
+            if (missionBtn != null)
+            {
+                // Lấy hoặc tạo EventTrigger component
+                EventTrigger trigger = missionBtn.GetComponent<EventTrigger>();
+                if (trigger == null)
+                {
+                    trigger = missionBtn.AddComponent<EventTrigger>();
+                }
+
+                // QUAN TRỌNG: Xóa tất cả triggers cũ trước khi thêm mới
+                // trigger.triggers.Clear();
+
+                // Tạo entry mới cho PointerClick
+                EventTrigger.Entry entry = new EventTrigger.Entry
+                {
+                    eventID = EventTriggerType.PointerClick
+                };
+                
+                entry.callback.AddListener((data) =>
+                {
+                    inTask = !inTask;
+                    anim.SetBool("inTask", inTask);
+                    Debug.Log("Mission button clicked, inTask is now: " + inTask);
+                });
+                
+                // Thêm entry vào triggers
+                trigger.triggers.Add(entry);
+                Debug.Log(trigger.triggers.Count + " triggers added to missionBtn");
+            }
+            else
+            {
+                Debug.LogError("missionBtn is null! Please assign it in Inspector!");
             }
         }
 
@@ -728,7 +778,6 @@ namespace InventoryPlus
 
             anim.SetBool("Show", _show);
             anim.SetBool("hasChest", inChestRange);
-            anim.SetBool("inTask", inTask);
         }
 
 
