@@ -40,7 +40,21 @@ namespace InventoryPlus
         public Vector3 GetRandomSpawnPosition()
         {
             Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * spawnRadius;
-            return transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+            Vector3 spawnPos = transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+            
+            // Raycast từ trên cao xuống để tìm mặt đất
+            RaycastHit hit;
+            float raycastHeight = 100f; // Độ cao bắt đầu raycast
+            Vector3 raycastStart = new Vector3(spawnPos.x, transform.position.y + raycastHeight, spawnPos.z);
+            
+            if (Physics.Raycast(raycastStart, Vector3.down, out hit, raycastHeight * 2))
+            {
+                // Trả về vị trí trên mặt đất
+                return hit.point;
+            }
+            
+            // Fallback: trả về vị trí gốc nếu không tìm thấy mặt đất
+            return spawnPos;
         }
 
         void OnDrawGizmosSelected()

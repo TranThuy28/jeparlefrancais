@@ -11264,6 +11264,7 @@ GameObject:
   - component: {fileID: 452289999}
   - component: {fileID: 452289998}
   - component: {fileID: 452290000}
+  - component: {fileID: 452290001}
   m_Layer: 0
   m_Name: spawner
   m_TagString: Untagged
@@ -11284,7 +11285,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 7c8d8ea15fd82ba4d957fd2e7bda5400, type: 2}
-  spawnLocations: []
+  spawnLocations:
+  - {fileID: 452290001}
   maxActiveItems: 50
   autoSpawnInterval: 5
   enableAutoSpawn: 1
@@ -11324,6 +11326,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawner: {fileID: 452289998}
   item: {fileID: 11400000, guid: 755b59f14e660bd4e93a643698dc5063, type: 2}
+--- !u!114 &452290001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452289997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9620c06bfd22a04438d6a1c4926a601b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1
+  allowedCategories: []
+  allowedChapters: 
+  spawnRadius: 10
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!1001 &453728348
 PrefabInstance:
   m_ObjectHideFlags: 0
