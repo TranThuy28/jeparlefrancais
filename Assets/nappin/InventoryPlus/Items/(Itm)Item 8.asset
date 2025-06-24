@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
-  m_Name: (Itm)Item 2
+  m_Name: (Itm)Item 8
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 0}
   itemPrefab: {fileID: 0}
