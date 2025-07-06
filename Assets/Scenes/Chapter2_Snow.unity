@@ -23116,7 +23116,7 @@ MonoBehaviour:
   raycastDistance: 10
   groundLayer:
     serializedVersion: 2
-    m_Bits: 39
+    m_Bits: 4294967295
 --- !u!136 &1038848919
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -23177,9 +23177,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c313dfc62f1615e47ad710c3facbfcf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8
+  moveSpeed: 5
   rotationSpeed: 8
   cameraTransform: {fileID: 1952561909}
+  animator: {fileID: 0}
 --- !u!1001 &1040108325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46105,7 +46106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1038848912}
-  offset: {x: 0, y: 0.7, z: -3}
+  offset: {x: 0, y: 0.7, z: -3.5}
   mouseSentivity: 100
   rotationSmoothTime: 0.1
 --- !u!4 &1954095593 stripped
