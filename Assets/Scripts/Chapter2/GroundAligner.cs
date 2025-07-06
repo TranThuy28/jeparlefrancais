@@ -1,7 +1,7 @@
 using UnityEngine;
 public class GroundAligner : MonoBehaviour
 {
-    public float raycastDistance = 1.5f;
+    public float raycastDistance = 10f;
     public LayerMask groundLayer;
 
     void LateUpdate()

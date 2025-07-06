@@ -19,7 +19,8 @@ public class Animations : MonoBehaviour
     int isRunningLeftHash;
     int isRunningRightHash;
     int isRunTurningHash;
-
+    static int JumpHash;
+    static int JumpMovingHash;
     void Start()
     {
         _anim = _player.GetComponent<Animator>();
@@ -32,6 +33,11 @@ public class Animations : MonoBehaviour
         isRunningLeftHash = Animator.StringToHash("isRunningLeft");
         isRunningRightHash = Animator.StringToHash("isRunningRight");
         isRunTurningHash = Animator.StringToHash("isRunTurning");
+        JumpHash = Animator.StringToHash("ToJump");
+        JumpMovingHash = Animator.StringToHash("ToJumpMoving");
+
+
+    
     }
 
     /*
@@ -74,6 +80,11 @@ public class Animations : MonoBehaviour
         bool isRunningLeft = _anim.GetBool(isRunningLeftHash);
         bool isRunningRight = _anim.GetBool(isRunningRightHash);
         bool isRunTurning = _anim.GetBool(isRunTurningHash);
+
+        bool Walking = isWalking || isWalkingLeft || isWalkingRight || isReturning;
+        bool Running = isRunning || isRunningLeft || isRunningRight || isRunTurning;
+
+        bool isJumping = Input.GetKeyDown(KeyCode.Space);
 
         if (!isCrouch && CPress)  // Nhấn phím C để cúi người
         {
@@ -122,12 +133,13 @@ public class Animations : MonoBehaviour
 
         if (!isReturning && SPress && !ShiftPress)
         {
-            _anim.SetBool(isReturningHash, true);
+            _anim.SetBool(isWalkingHash, true);
         }
         if (isReturning && !SPress && !ShiftPress)
         {
-            _anim.SetBool(isReturningHash, false);
+            _anim.SetBool(isWalkingHash, false);
         }
+
 
         if (!isRunningLeft && APress && ShiftPress)
         {
@@ -146,7 +158,7 @@ public class Animations : MonoBehaviour
         {
             _anim.SetBool(isRunningRightHash, false);
         }
-        
+
         if (!isRunTurning && SPress && ShiftPress)
         {
             _anim.SetBool(isRunTurningHash, true);
@@ -156,7 +168,17 @@ public class Animations : MonoBehaviour
             _anim.SetBool(isRunTurningHash, false);
         }
 
+        if (isJumping && !Walking && !Running)
+        {
+            _anim.ResetTrigger(JumpMovingHash);
+            _anim.SetTrigger(JumpHash);
+        }
 
+        if (Input.GetKeyDown(KeyCode.Space) && (Walking || Running))
+        {
+            _anim.ResetTrigger(JumpHash);
+            _anim.SetTrigger(JumpMovingHash);
+        }
         
     }
 }
