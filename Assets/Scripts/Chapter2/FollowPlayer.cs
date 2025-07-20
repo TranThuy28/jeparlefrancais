@@ -2,37 +2,47 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
-    public Transform player;
-    public Vector3 offset = new Vector3(0, 1.5f, -5);
-    public float mouseSentivity = 80f;
-    public float rotationSmoothTime = 0.1f;
+    public Transform cameraTarget;                     // NÊN gán vào GameObject nhân vật GỐC, không phải head/hip
+    public Vector3 offset = new Vector3(0, 2f, -5);
+    public float mouseSensitivity = 80f;
+    public float rotationSmoothTime = 0.05f;
+
     private float yaw = 0f;
-    private float pitch = 2f;
-    private float pitchMin = -10f;
-    private float pitchMax = 40f;
+    private float pitch = 10f;
+    private float pitchMin = -20f;
+    private float pitchMax = 60f;
+    private Vector3 currentVelocity;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = true; // ẩn con trỏ
+        Cursor.visible = false;
     }
 
-    void LateUpdate() // Sử dụng LateUpdate để đảm bảo player đã di chuyển xong trước khi camera cập nhật
+    void LateUpdate()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSentivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSentivity * Time.deltaTime;
+        // Lấy input chuột để xoay camera
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         yaw += mouseX;
         pitch -= mouseY;
         pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
 
+        // Tính góc xoay thành quaternion
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
-        // Cập nhật vị trí camera
-        transform.position = player.position + rotation * offset;
 
-        transform.LookAt(player.position + Vector3.up * 1.5f);
+        // Tính vị trí target của camera theo offset
+        Vector3 targetPos = cameraTarget.position + Quaternion.Euler(pitch, yaw, 0) * offset;
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, 0.05f);
 
-        // Xoay camera theo hướng nhìn của nhân vật
-        // transform.rotation = Quaternion.Euler(0, player.eulerAngles.y, 0);
+
+
+        // Làm mượt vị trí
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, rotationSmoothTime);
+
+        // Camera luôn nhìn về một điểm cố định (gốc nhân vật + một chút chiều cao)
+        transform.LookAt(cameraTarget.position);
     }
 }
+
