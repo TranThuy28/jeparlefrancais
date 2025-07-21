@@ -7,8 +7,8 @@ namespace InventoryPlus
 {
     public class Storage : MonoBehaviour
     {
-        protected List<UISlot> UISlots = new List<UISlot>();
-        protected List<ItemSlot> slots = new List<ItemSlot>();
+        public List<UISlot> UISlots = new List<UISlot>();
+        public List<ItemSlot> slots = new List<ItemSlot>();
 
 
         /**/

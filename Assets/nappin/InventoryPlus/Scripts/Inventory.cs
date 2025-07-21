@@ -58,7 +58,6 @@ namespace InventoryPlus
                 anim.SetBool("inTask", inTask);
                 ToggleInventory();
             }
-
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame)
             {
@@ -98,7 +97,7 @@ namespace InventoryPlus
                 AssignInventorySlots();
                 AssignHotbarSlots();
 
-                SetupMissionBtnClickHandler();
+                //SetupMissionBtnClickHandler();
                 AddStartingInventory();
             }
             ShowInventory(false);
@@ -137,53 +136,53 @@ namespace InventoryPlus
         
         public void ShowHotbar(bool _show)
         {
-            Debug.Log("ShowHotbar called with _show: " + _show);
             if (hasHotbar)
             {
                 for (int i = 0; i < hotbarUISlots.Count; i++)
                 {
+                    //Debug.Log(hotbarUISlots[i].gameObject?.name);
                     hotbarUISlots[i].gameObject.SetActive(_show);
                 }
             }
         }
     
 
-        private void SetupMissionBtnClickHandler()
-        {     
-            if (missionBtn != null)
-            {
-                // Lấy hoặc tạo EventTrigger component
-                EventTrigger trigger = missionBtn.GetComponent<EventTrigger>();
-                if (trigger == null)
-                {
-                    trigger = missionBtn.AddComponent<EventTrigger>();
-                }
+        // private void SetupMissionBtnClickHandler()
+        // {     
+        //     if (missionBtn != null)
+        //     {
+        //         // Lấy hoặc tạo EventTrigger component
+        //         EventTrigger trigger = missionBtn.GetComponent<EventTrigger>();
+        //         if (trigger == null)
+        //         {
+        //             trigger = missionBtn.AddComponent<EventTrigger>();
+        //         }
 
-                // QUAN TRỌNG: Xóa tất cả triggers cũ trước khi thêm mới
-                // trigger.triggers.Clear();
+        //         // QUAN TRỌNG: Xóa tất cả triggers cũ trước khi thêm mới
+        //         // trigger.triggers.Clear();
 
-                // Tạo entry mới cho PointerClick
-                EventTrigger.Entry entry = new EventTrigger.Entry
-                {
-                    eventID = EventTriggerType.PointerClick
-                };
+        //         // Tạo entry mới cho PointerClick
+        //         EventTrigger.Entry entry = new EventTrigger.Entry
+        //         {
+        //             eventID = EventTriggerType.PointerClick
+        //         };
                 
-                entry.callback.AddListener((data) =>
-                {
-                    inTask = !inTask;
-                    anim.SetBool("inTask", inTask);
-                    Debug.Log("Mission button clicked, inTask is now: " + inTask);
-                });
+        //         entry.callback.AddListener((data) =>
+        //         {
+        //             inTask = !inTask;
+        //             anim.SetBool("inTask", inTask);
+        //             Debug.Log("Mission button clicked, inTask is now: " + inTask);
+        //         });
                 
-                // Thêm entry vào triggers
-                trigger.triggers.Add(entry);
-                Debug.Log(trigger.triggers.Count + " triggers added to missionBtn");
-            }
-            else
-            {
-                Debug.LogError("missionBtn is null! Please assign it in Inspector!");
-            }
-        }
+        //         // Thêm entry vào triggers
+        //         trigger.triggers.Add(entry);
+        //         Debug.Log(trigger.triggers.Count + " triggers added to missionBtn");
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("missionBtn is null! Please assign it in Inspector!");
+        //     }
+        // }
 
 
         private void AssignInventorySlots()
@@ -207,7 +206,6 @@ namespace InventoryPlus
                 {
                     UISlots.Add(hotbarUISlots[i]);
                     slots.Add(null);
-
                     if (enableMouseDrag) hotbarUISlots[i].SetupMouseDrag(this);
                     hotbarUISlots[i].SetupUISlot(this);
                 }
@@ -645,7 +643,7 @@ namespace InventoryPlus
                 swapUISlot = _UIInventorySlot;
                 _UIInventorySlot.SetSwapState(true);
             }
-            else if (_UIInventorySlot == swapUISlot)
+            else if (_UIInventorySlot == swapUISlot || _UIInventorySlot.name == "(Prb)Slotout" || _UIInventorySlot.name == "(Prb)Slotcraft")
             {
                 swapUISlot = null;
                 _UIInventorySlot.SetSwapState(false);
@@ -669,7 +667,11 @@ namespace InventoryPlus
                     if (itemSlot_2 != null) _UIInventorySlot.UpdateUI(itemSlot_2, showDurabilityValues, false);
                     else _UIInventorySlot.ShowUI(false);
                 }
-
+                else if (swapUISlot.name == "(Prb)Slotout" && itemSlot_2 != null)
+                {
+                    swapUISlot = null;
+                    _UIInventorySlot.SetSwapState(false);
+                }
                 //attempt swap
                 else
                 {
