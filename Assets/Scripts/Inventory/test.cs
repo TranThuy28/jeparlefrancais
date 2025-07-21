@@ -16,7 +16,7 @@ namespace InventoryPlus
                 Debug.LogError("Inventory is not assigned!");
                 return;
             }
-            inventory.AddInventory(swordItem, 1, 100f, false);
+            //inventory.AddInventory(swordItem, 1, 100f, false);
         }
     }
 }
