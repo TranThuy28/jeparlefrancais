@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)red_mushroom
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 30b5dd9def1bc9c41850b7d8a41f8207, type: 3}
+  itemPrefab: {fileID: 102636, guid: 6df69aa4c7dd16842b1448e84b884e15, type: 3}
+  itemChapter: 0
+  itemName: red mushrooms
+  itemID: 
+  itemCategory: mushroom
+  isStackable: 1
+  stackSize: 9999
+  isDurable: 0
+  maxDurability: 100
+  usageCost: 1
+  hasDamagedSprites: 0
+  damagedSprites: []
+  itemAttribute: material
+  itemDescription: 
+  itemRarity: 0
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 0}
+  equipAudio: {fileID: 0}

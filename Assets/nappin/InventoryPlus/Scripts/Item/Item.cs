@@ -25,6 +25,7 @@ namespace InventoryPlus
 
         [SerializeField] public bool isDurable = false;
         [SerializeField] public int maxDurability = 100;
+        [SerializeField] public int sellingPrice = 100;
         [SerializeField] public int usageCost = 1;
         [SerializeField] public bool hasDamagedSprites = false;
         [SerializeField] public Sprite[] damagedSprites;
