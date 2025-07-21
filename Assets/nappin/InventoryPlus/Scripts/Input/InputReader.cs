@@ -51,8 +51,6 @@ namespace InventoryPlus
         {
             inputModule = this.GetComponent<StandaloneInputModule>();
             eventSystem = this.GetComponent<EventSystem>();
-            Debug.Log("InputReader Awake - EventSystem: " + (eventSystem != null ? "Found" : "Not Found") + 
-                    ", InputModule: " + (inputModule != null ? "Found" : "Not Found"));
             inputModule.horizontalAxis = InventoryOffHorizontalInput;
             inventory.SelectFirstHotbarSlot();
             inventory.ClearSwap();

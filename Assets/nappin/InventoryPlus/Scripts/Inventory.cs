@@ -206,7 +206,7 @@ namespace InventoryPlus
                 {
                     UISlots.Add(hotbarUISlots[i]);
                     slots.Add(null);
-                    if (enableMouseDrag) hotbarUISlots[i].SetupMouseDrag(this);
+                    if (enableMouseDrag && i != 5) hotbarUISlots[i].SetupMouseDrag(this);
                     hotbarUISlots[i].SetupUISlot(this);
                 }
             }
@@ -638,6 +638,9 @@ namespace InventoryPlus
 
         public void SwapItem(UISlot _UIInventorySlot)
         {
+            if (_UIInventorySlot.name == "(Prb)Slotcraft") {
+                return;
+            }
             if (swapUISlot == null)
             {
                 swapUISlot = _UIInventorySlot;

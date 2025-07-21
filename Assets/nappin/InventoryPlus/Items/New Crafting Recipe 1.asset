@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: New Crafting Recipe
+  m_Name: New Crafting Recipe 1
   m_EditorClassIdentifier: Assembly-CSharp:InventoryPlus:CraftingRecipe
-  recipeName: 
-  result: {fileID: 11400000, guid: 0eb87b4b2b214c6429157b5c6ec1ea55, type: 2}
-  tier: 6
+  recipeName: a
+  result: {fileID: 11400000, guid: 072f29382286d79439f9d1eea529bee5, type: 2}
+  tier: 2
   categoryRequirements:
   - itemCategory: plant
-    minCount: 2
+    minCount: 1
   description: 
