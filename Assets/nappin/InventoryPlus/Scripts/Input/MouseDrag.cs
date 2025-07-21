@@ -31,7 +31,6 @@ namespace InventoryPlus
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            Debug.Log("OnBeginDrag called on " + UISlot.name);
             inventory.SwapItem(UISlot);
 
             //instanciate dragged object preview
