@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
   m_Name: (Itm)Item 1
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 0}
-  itemPrefab: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 82407ffd596b32b4bb7dc4b99c7c542a, type: 3}
+  itemPrefab: {fileID: 1039872785135470, guid: b16e02476e2d36e48bec9347102e8f1a, type: 3}
   itemChapter: 0
-  itemName: 
+  itemName: clothes
   itemID: 
   itemCategory: 
-  isStackable: 1
+  isStackable: 0
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: 
+  itemAttribute: material
   itemDescription: 
   itemRarity: 0
   useAudio: {fileID: 0}

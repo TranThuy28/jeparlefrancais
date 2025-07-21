@@ -25,7 +25,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: 
+  itemAttribute: material
   itemDescription: 
   itemRarity: 0
   useAudio: {fileID: 0}
