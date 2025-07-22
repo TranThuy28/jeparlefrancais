@@ -1651,7 +1651,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: a6ee9c0b7688d1e429b549b91a357920, type: 3}
   m_Resource: {fileID: 8300000, guid: a6ee9c0b7688d1e429b549b91a357920, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2020,8 +2020,7 @@ MonoBehaviour:
   anim: {fileID: 1599094235}
   inputItems: []
   recipes:
-  - {fileID: 11400000, guid: 26b405cfdd124db439b38903396aae89, type: 2}
-  - {fileID: 11400000, guid: ede192dc89dc89d4d850464ac3f289f9, type: 2}
+  - {fileID: 11400000, guid: 7e28f7fc015967f4fba9ba0729e76a88, type: 2}
   audioSource: {fileID: 1392563028}
 --- !u!95 &1599094235 stripped
 Animator:

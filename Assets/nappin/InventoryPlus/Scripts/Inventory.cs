@@ -542,18 +542,18 @@ namespace InventoryPlus
                 {
                     if (slot.GetItemType().isDurable)
                     {
-                        if (slot.GetItemDurability() - slot.GetItemType().usageCost > 0)
-                        {
-                            //use not stackable
-                            slots[UISlots.IndexOf(_UIslot)].SetItemDurability(slot.GetItemDurability() - slot.GetItemType().usageCost);
-                            _UIslot.UpdateUI(slot, showDurabilityValues, false);
-                        }
-                        else
-                        {
+                        // if (slot.GetItemDurability() - slot.GetItemType().usageCost > 0)
+                        // {
+                        //     //use not stackable
+                        //     slots[UISlots.IndexOf(_UIslot)].SetItemDurability(slot.GetItemDurability() - slot.GetItemType().usageCost);
+                        //     _UIslot.UpdateUI(slot, showDurabilityValues, false);
+                        // }
+                        // else
+                        // {
                             //remove not stackable
                             slots[UISlots.IndexOf(_UIslot)] = null;
                             _UIslot.ShowUI(false);
-                        }
+                        // }
                     }
                     else isItemUsable = false;
                 }
