@@ -15,7 +15,6 @@ namespace InventoryPlus
 
         /**/
 
-
         #region Setup
 
         public void SetInventory(UISlot _UISlot, Inventory _inventory)
