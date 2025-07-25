@@ -65,6 +65,11 @@ namespace InventoryPlus
                 mouseDrag = this.gameObject.AddComponent<MouseDrag>();
                 mouseDrag.SetInventory(this, _inventory);
             }
+            if (!this.gameObject.GetComponent<RightClickMenu>())
+            {
+                RightClickMenu rightClickMenu = this.gameObject.AddComponent<RightClickMenu>();
+                rightClickMenu.SetInventory(this, _inventory);
+            }
         }
 
 
