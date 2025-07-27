@@ -59,7 +59,7 @@ namespace InventoryPlus
         {
             if (currentQuest != null && currentQuest.isCompleted)
             {
-                QuestManager questManager = FindObjectOfType<QuestManager>();
+                QuestManager questManager = FindFirstObjectByType<QuestManager>();
                 if (questManager != null)
                 {
                     questManager.CompleteQuest(currentQuest);
