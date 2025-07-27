@@ -99,6 +99,8 @@ namespace InventoryPlus
 
                 //SetupMissionBtnClickHandler();
                 AddStartingInventory();
+                ToggleInventory();
+                anim.SetBool("inTask", inTask);
             }
             ShowInventory(false);
             ShowHotbar(false);
@@ -206,7 +208,7 @@ namespace InventoryPlus
                 {
                     UISlots.Add(hotbarUISlots[i]);
                     slots.Add(null);
-                    if (enableMouseDrag && i != 5) hotbarUISlots[i].SetupMouseDrag(this);
+                    if (enableMouseDrag) hotbarUISlots[i].SetupMouseDrag(this);
                     hotbarUISlots[i].SetupUISlot(this);
                 }
             }
@@ -542,18 +544,18 @@ namespace InventoryPlus
                 {
                     if (slot.GetItemType().isDurable)
                     {
-                        // if (slot.GetItemDurability() - slot.GetItemType().usageCost > 0)
-                        // {
-                        //     //use not stackable
-                        //     slots[UISlots.IndexOf(_UIslot)].SetItemDurability(slot.GetItemDurability() - slot.GetItemType().usageCost);
-                        //     _UIslot.UpdateUI(slot, showDurabilityValues, false);
-                        // }
-                        // else
-                        // {
+                        if (slot.GetItemDurability() - slot.GetItemType().usageCost > 0)
+                        {
+                            //use not stackable
+                            slots[UISlots.IndexOf(_UIslot)].SetItemDurability(slot.GetItemDurability() - slot.GetItemType().usageCost);
+                            _UIslot.UpdateUI(slot, showDurabilityValues, false);
+                        }
+                        else
+                        {
                             //remove not stackable
                             slots[UISlots.IndexOf(_UIslot)] = null;
                             _UIslot.ShowUI(false);
-                        // }
+                        }
                     }
                     else isItemUsable = false;
                 }
@@ -638,9 +640,6 @@ namespace InventoryPlus
 
         public void SwapItem(UISlot _UIInventorySlot)
         {
-            if (_UIInventorySlot.name == "(Prb)Slotcraft") {
-                return;
-            }
             if (swapUISlot == null)
             {
                 swapUISlot = _UIInventorySlot;

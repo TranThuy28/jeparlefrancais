@@ -51,7 +51,7 @@ namespace InventoryPlus
                 itemAttribute.text = _inventorySlot.GetItemType().itemAttribute;
                 itemDescription.text = _inventorySlot.GetItemType().itemDescription;
 
-                if (_inventorySlot.GetItemType().isDurable) itemNum.text = _inventorySlot.GetItemDurability().ToString() + "/" + _inventorySlot.GetItemType().maxDurability.ToString();
+                if (_inventorySlot.GetItemType().isDurable) itemNum.text = "";
                 else itemNum.text = _inventorySlot.GetItemNum().ToString();
             }
             else
