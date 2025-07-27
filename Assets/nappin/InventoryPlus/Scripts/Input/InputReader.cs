@@ -85,7 +85,7 @@ namespace InventoryPlus
             if (tmpObj != currentSelectedObj)
             {
                 if (playAudioOnSelection) selectionAudio.Play();
-                if (details != null && inventoryOn) details.UpdateDetails(currentSelectedObj.GetComponent<UISlot>(), true);
+                if (details != null) details.UpdateDetails(currentSelectedObj.GetComponent<UISlot>(), true);
             }
         }
 
@@ -96,25 +96,25 @@ namespace InventoryPlus
             // Example of a InputManager entry: (Input.GetButtonDown("ToggleInventory"))
             if (Input.GetKeyDown(KeyCode.I))
             {
-                inventoryOn = !inventoryOn;
+                // inventoryOn = !inventoryOn;
 
-                ShowCursor(inventoryOn);
+                //ShowCursor(inventoryOn);
 //                player.EnableController(!inventoryOn);
-                inventory.ShowInventory(inventoryOn);
-                inventory.ForceEndSwap();
+                // inventory.ShowInventory(inventoryOn);
+                // inventory.ForceEndSwap();
 
                 //inventory open - inventory closed
-                if (inventoryOn)
-                {
-                    inputModule.horizontalAxis = InventoryOnHorizontalInput;
-                    inventory.SelectFirstInventorySlot();
+                // if (inventoryOn)
+                // {
+                //     inputModule.horizontalAxis = InventoryOnHorizontalInput;
+                //     inventory.SelectFirstInventorySlot();
                     
-                }
-                else
-                {
-                    inputModule.horizontalAxis = InventoryOffHorizontalInput;
-                    inventory.SelectFirstHotbarSlot();
-                }
+                // }
+                // else
+                // {
+                //     inputModule.horizontalAxis = InventoryOffHorizontalInput;
+                //     inventory.SelectFirstHotbarSlot();
+                // }
             }
         }
 
