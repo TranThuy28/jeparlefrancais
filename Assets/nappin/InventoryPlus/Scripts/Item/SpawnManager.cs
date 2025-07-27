@@ -62,7 +62,7 @@ namespace InventoryPlus
 
             if (showDebugLogs)
             {
-                Debug.Log($"ItemSpawnManager initialized with {spawnLocations.Count} spawn locations");
+               // Debug.Log($"ItemSpawnManager initialized with {spawnLocations.Count} spawn locations");
             }
         }
 
@@ -212,7 +212,7 @@ namespace InventoryPlus
 
             if (showDebugLogs)
             {
-                Debug.Log($"Spawned item '{item.itemName}' at position {spawnPosition}");
+              //  Debug.Log($"Spawned item '{item.itemName}' at position {spawnPosition}");
             }
 
             return spawnedObject;
