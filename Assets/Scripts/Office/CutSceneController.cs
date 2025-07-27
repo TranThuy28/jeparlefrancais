@@ -1,7 +1,6 @@
 using UnityEngine;
 
  // Start is called once before the first execution of Update after the MonoBehaviour is created
-using UnityEngine;
 using UnityEngine.Playables;
 
 public class CutSceneController : MonoBehaviour

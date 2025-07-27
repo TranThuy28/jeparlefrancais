@@ -65,6 +65,11 @@ namespace InventoryPlus
                 mouseDrag = this.gameObject.AddComponent<MouseDrag>();
                 mouseDrag.SetInventory(this, _inventory);
             }
+            if (!this.gameObject.GetComponent<RightClickMenu>())
+            {
+                RightClickMenu rightClickMenu = this.gameObject.AddComponent<RightClickMenu>();
+                rightClickMenu.SetInventory(this, _inventory);
+            }
         }
 
 
@@ -134,15 +139,16 @@ namespace InventoryPlus
 
         public void UpdateDurability(ItemSlot _inventorySlot, bool _exposeDurabilityValues)
         {
-            if (_inventorySlot.GetItemType().isDurable)
-            {
-                itemDurabilityObj.SetActive(true);
-                float percentFill = (float)_inventorySlot.GetItemDurability() / _inventorySlot.GetItemType().maxDurability;
-                itemDurabilityFill.rectTransform.localScale = new Vector3(percentFill, 1f, 1f);
+            // if (_inventorySlot.GetItemType().isDurable)
+            // {
+            //     itemDurabilityObj.SetActive(true);
+            //     float percentFill = (float)_inventorySlot.GetItemDurability() / _inventorySlot.GetItemType().maxDurability;
+            //     itemDurabilityFill.rectTransform.localScale = new Vector3(percentFill, 1f, 1f);
 
-                SetDurabilityVisibility(_inventorySlot, _exposeDurabilityValues);
-            }
-            else itemDurabilityObj.SetActive(false);
+            //     SetDurabilityVisibility(_inventorySlot, _exposeDurabilityValues);
+            // }
+            // else itemDurabilityObj.SetActive(false);
+            itemDurabilityObj.SetActive(false);
         }
 
         #endregion

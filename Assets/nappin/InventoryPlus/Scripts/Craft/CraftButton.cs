@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using InventoryPlus;
+using System;
+using UnityEditor;
 
 namespace InventoryPlus
 {
@@ -12,9 +14,10 @@ namespace InventoryPlus
         public Inventory inventory; // Tham chiếu đến Inventory để lấy item
         public UISlot[] inputSlots = new UISlot[4]; // 4 ô input
         public UISlot outputSlot; // Ô output
+        public Animator anim;
         public List<ItemSlot> inputItems = new List<ItemSlot>();
         public List<CraftingRecipe> recipes = new List<CraftingRecipe>(); // Danh sách công thức
-
+        public AudioSource audioSource; // Nguồn âm thanh để phát âm thanh
         private Button button;
 
         private void Awake()
@@ -26,7 +29,7 @@ namespace InventoryPlus
                 return;
             }
             button.onClick.AddListener(TryCraft);
-    
+
             SubscribeToSlotEvents();
 
             UpdateButtonState(); // Khởi tạo trạng thái nút
@@ -41,7 +44,7 @@ namespace InventoryPlus
         private void OnDisable()
         {
             // Hủy đăng ký events khi disable
-            UnsubscribeFromSlotEvents();
+            // UnsubscribeFromSlotEvents();
         }
 
         private void OnDestroy()
@@ -74,7 +77,6 @@ namespace InventoryPlus
         // Phương thức này sẽ được gọi định kỳ để kiểm tra slot
         private void CheckSlotsAndUpdateButton()
         {
-            Debug.Log("CheckSlotsAndUpdateButton() called at: " + Time.time);
             UpdateButtonState();
         }
 
@@ -93,7 +95,7 @@ namespace InventoryPlus
                 // Kiểm tra công thức
                 var (isValid, result, failureReason) = CraftingUtils.CheckCraftingRecipe(inputItems, recipes);
 
-                if (isValid && result != null)
+                if (isValid && result != null && inventory.GetInventorySlot(outputSlot) == null)
                 {
                     // Chỉ cập nhật output slot khi craft thành công
                     if (outputSlot != null)
@@ -103,8 +105,12 @@ namespace InventoryPlus
                             // Tạo ItemSlot một cách an toàn
                             ItemSlot craftedItem = new ItemSlot(result, 1, 1f);
                             SafeUpdateOutputSlot(craftedItem);
+                            if (audioSource != null)
+                            {
+                                audioSource.Play();
+                            }
                             Debug.Log($"Crafting Success! Created: {result.name}");
-                            
+
                             // Sử dụng items từ input slots
                             foreach (var slot in inputSlots)
                             {
@@ -199,7 +205,7 @@ namespace InventoryPlus
             allSlotsFilled = filledSlots >= 4; // Cần tất cả 4 slots
 
             // Thêm kiểm tra công thức để chắc chắn có thể craft
-            bool canCraft = allSlotsFilled;
+            bool canCraft = allSlotsFilled && inventory.GetInventorySlot(outputSlot) == null;
             // if (allSlotsFilled)
             // {
             //     try
@@ -215,10 +221,9 @@ namespace InventoryPlus
             //}
 
             button.interactable = canCraft;
-            
             if (!canCraft)
             {
-                Debug.Log($"Craft button disabled: Filled slots: {filledSlots}/4");
+                anim.SetTrigger("Normal");
             }
         }
 

@@ -13,7 +13,7 @@ public class GroundAligner : MonoBehaviour
         {
             Vector3 pos = transform.position;
             pos.y = hit.point.y; // Điều chỉnh Y theo mặt đất
-            transform.position = pos;
+            //Stransform.position = pos;
         }
     }
 }

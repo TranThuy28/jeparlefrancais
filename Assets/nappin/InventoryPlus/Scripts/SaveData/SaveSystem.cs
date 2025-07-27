@@ -52,7 +52,7 @@ namespace InventoryPlus
             if (!ignoreSaves)
             {
                 //chests
-                Chest[] chests = GameObject.FindObjectsOfType<Chest>();
+                Chest[] chests = GameObject.FindObjectsByType<Chest>(FindObjectsSortMode.None);
                 for (int i = 0; i < chests.Length; i++)
                 {
                     List<ItemSlot> chestList = chests[i].GetSlots();
@@ -63,7 +63,7 @@ namespace InventoryPlus
                 }
 
                 //pickups
-                PickUp[] pickUps = GameObject.FindObjectsOfType<PickUp>();
+                PickUp[] pickUps = GameObject.FindObjectsByType<PickUp>(FindObjectsSortMode.None);
                 for (int i = 0; i < pickUps.Length; i++)
                 {
                     PickUpData inventoryTriggerData = new PickUpData(pickUps[i].name, pickUps[i].transform.position.x, pickUps[i].transform.position.y, pickUps[i].addToInventory, pickUps[i].removeFromInventory);
@@ -71,7 +71,7 @@ namespace InventoryPlus
                 }
 
                 //inventory
-                Inventory inventory = GameObject.FindObjectOfType<Inventory>();
+                Inventory inventory = GameObject.FindFirstObjectByType<Inventory>();
                 List<ItemSlot> inventoryList = inventory.GetSlots();
                 //inventoryList.RemoveAll(item => item == null);
 
@@ -124,7 +124,7 @@ namespace InventoryPlus
                         chest.chestItems = chestData.items;
                     }
 
-                    PickUp[] pickUps = GameObject.FindObjectsOfType<PickUp>();
+                    PickUp[] pickUps = GameObject.FindObjectsByType<PickUp>(FindObjectsSortMode.None);
                     for (int i = 0; i < pickUps.Length; i++) GameObject.Destroy(pickUps[i].gameObject);
 
                     foreach (PickUpData pickUpData in saveDataInteractable.pickUpDataList.pickUpData)
@@ -144,7 +144,7 @@ namespace InventoryPlus
                     string jsonDataInventory = File.ReadAllText(pathInventory);
                     inventoryData = JsonUtility.FromJson<InventoryData>(jsonDataInventory);
 
-                    Inventory inventory = GameObject.FindObjectOfType<Inventory>();
+                    Inventory inventory = GameObject.FindFirstObjectByType<Inventory>();
                     inventory.LoadInventory(inventoryData.items);
                 }
             }
