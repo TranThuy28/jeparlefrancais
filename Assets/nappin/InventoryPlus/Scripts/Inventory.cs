@@ -51,32 +51,32 @@ namespace InventoryPlus
         private void Update()
         {
             // Sử dụng Input System mới để kiểm tra phím I
-            if (UnityEngine.InputSystem.Keyboard.current != null &&
-                UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
-            {
-                inTask = false;
-                anim.SetBool("inTask", inTask);
-                ToggleInventory();
-            }
-            if (UnityEngine.InputSystem.Keyboard.current != null &&
-                UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame)
-            {
-                inTask = !inTask;
-                isInventoryOpen = true;
+            // if (UnityEngine.InputSystem.Keyboard.current != null &&
+            //     UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
+            // {
+            //     inTask = false;
+            //     anim.SetBool("inTask", inTask);
+            //     ToggleInventory();
+            // }
+            // if (UnityEngine.InputSystem.Keyboard.current != null &&
+            //     UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame)
+            // {
+            //     inTask = !inTask;
+            //     isInventoryOpen = true;
 
-                ToggleInventory();
-                anim.SetBool("inTask", inTask);
-                Debug.Log("Mission button clicked, inTask is now: " + inTask);
-            }
+            //     ToggleInventory();
+            //     anim.SetBool("inTask", inTask);
+            //     Debug.Log("Mission button clicked, inTask is now: " + inTask);
+            // }
         }
 
         // Thêm method để toggle inventory
         public void ToggleInventory()
         {
             isInventoryOpen = !isInventoryOpen;
-            ShowInventory(isInventoryOpen);
-            ShowHotbar(isInventoryOpen);
-            if (isInventoryOpen)
+            ShowInventory(true);
+            ShowHotbar(true);
+            if (true)
             {
                 // Clear any swap state when opening inventory
                 ClearSwap();
@@ -99,11 +99,10 @@ namespace InventoryPlus
 
                 //SetupMissionBtnClickHandler();
                 AddStartingInventory();
-                ToggleInventory();
-                anim.SetBool("inTask", inTask);
             }
-            ShowInventory(false);
-            ShowHotbar(false);
+            ShowInventory(true);
+            ShowHotbar(true);
+            SelectFirstInventorySlot();
         }
 
 
