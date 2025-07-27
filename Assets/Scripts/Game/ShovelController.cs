@@ -96,7 +96,7 @@ public class ShovelController : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     
     void CollectNearbySnow()
     {
-        Snowflake[] allSnow = FindObjectsOfType<Snowflake>();
+        Snowflake[] allSnow = FindObjectsByType<Snowflake>(FindObjectsSortMode.None);
         
         foreach (Snowflake snow in allSnow)
         {

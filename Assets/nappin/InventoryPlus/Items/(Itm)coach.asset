@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7470d1bfe28a7e46bdebacaa8dc4e17, type: 3}
+  m_Name: (Itm)coach
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 82407ffd596b32b4bb7dc4b99c7c542a, type: 3}
+  itemPrefab: {fileID: 1039872785135470, guid: 6dd867f5eb239ad45989b6a22d014e6b, type: 3}
+  itemChapter: 0
+  itemName: Coach
+  itemID: 
+  itemCategory: 
+  isStackable: 0
+  stackSize: 9999
+  isDurable: 1
+  maxDurability: 100
+  sellingPrice: 100
+  usageCost: 1
+  hasDamagedSprites: 0
+  damagedSprites: []
+  itemAttribute: material
+  itemDescription: 
+  itemRarity: 0
+  useAudio: {fileID: 0}
+  dropAudio: {fileID: 0}
+  equipAudio: {fileID: 0}

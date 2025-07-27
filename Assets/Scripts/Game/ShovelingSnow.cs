@@ -182,7 +182,7 @@ public class SnowGameManager : MonoBehaviour
         fallingSnow.Clear();
         
         // Clean up any remaining snow
-        Snowflake[] allSnow = FindObjectsOfType<Snowflake>();
+        Snowflake[] allSnow = FindObjectsByType<Snowflake>(FindObjectsSortMode.None);
         foreach (Snowflake snow in allSnow)
         {
             Destroy(snow.gameObject);

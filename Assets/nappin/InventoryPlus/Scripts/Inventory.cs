@@ -99,6 +99,8 @@ namespace InventoryPlus
 
                 //SetupMissionBtnClickHandler();
                 AddStartingInventory();
+                ToggleInventory();
+                anim.SetBool("inTask", inTask);
             }
             ShowInventory(false);
             ShowHotbar(false);

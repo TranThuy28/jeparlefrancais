@@ -1,0 +1,230 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using Unity.Cinemachine;
+using System.Collections;
+
+public class DialogueManager : MonoBehaviour
+{
+    public static DialogueManager Instance;
+    public GameObject dialoguePanel;
+    public GameObject dialogueUI;
+    public CinemachineCamera dialogueCamera;
+    public CinemachineCamera playerCamera;
+    public TextMeshProUGUI dialogueText;
+    public TextMeshProUGUI speakerNameText;
+    
+    [Header("Camera Transition Settings")]
+    public float cameraTransitionDuration = 1.5f;
+    public AnimationCurve cameraTransitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    
+    [Header("Player Control Settings")]
+    public string playerTag = "Player";
+    public GameObject player;
+    private string[] lines;
+    private int index;
+    private bool isTalking;
+    private bool isTransitioning;
+    private Transform npc;
+    
+    void Awake()
+    {
+        Instance = this;
+        dialogueUI.SetActive(false);
+        Debug.Log("DialogueManager đã được khởi tạo.");
+    }
+    
+    void Update()
+    {
+        if (isTalking && !isTransitioning && Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("Đã nhấn K để chuyển dòng thoại tiếp theo.");
+            ShowLine();
+        }
+    }
+    
+    public void StartDialogue(string[] dialogueLines, Transform npcTransform)
+    {
+        if (isTransitioning) return; // Tránh bắt đầu dialogue khi đang chuyển camera
+        
+        npc = npcTransform;
+        lines = dialogueLines;
+        index = 0;
+        isTalking = true;
+        
+        // Vô hiệu hóa điều khiển người chơi
+        //DisablePlayerController();
+            
+        Debug.Log("Bắt đầu hội thoại.");
+        
+        // Bắt đầu chuyển camera mượt mà
+        StartCoroutine(SwitchToDialogueCameraSmooth());
+    }
+    
+    void ShowLine()
+    {
+        if (index < lines.Length)
+        {
+            dialogueText.text = lines[index];
+            Debug.Log("Hiển thị lời thoại: " + lines[index]);
+            index++;
+            Debug.Log("Chỉ số dòng thoại hiện tại: " + index);
+        }
+        else
+        {
+            EndDialogue();
+        }
+    }
+    
+    public void EndDialogue()
+    {
+        if (isTransitioning) return; // Tránh kết thúc dialogue khi đang chuyển camera
+        
+        isTalking = false;
+        Debug.Log("Kết thúc hội thoại.");
+        
+        // Bắt đầu chuyển về camera người chơi mượt mà
+        StartCoroutine(SwitchToPlayerCameraSmooth());
+    }
+    
+    IEnumerator SwitchToDialogueCameraSmooth()
+    {
+        isTransitioning = true;
+        Debug.Log("Bắt đầu chuyển sang camera hội thoại mượt mà.");
+        
+        // Thiết lập camera dialogue để nhìn về phía NPC
+        if (npc != null && dialogueCamera != null)
+        {
+            // Đặt vị trí camera để nhìn NPC từ góc đẹp
+            Vector3 npcPosition = npc.position;
+            Vector3 cameraOffset = new Vector3(0.0f, 1.5f, 2f); // Có thể điều chỉnh offset này
+            
+            dialogueCamera.transform.position = npcPosition + cameraOffset;
+            dialogueCamera.transform.LookAt(npcPosition + Vector3.up * 1.5f); // Nhìn về mặt NPC
+        }
+        
+        // Chuyển độ ưu tiên camera với hiệu ứng mượt
+        float elapsedTime = 0f;
+        int startPriority = dialogueCamera.Priority;
+        int targetPriority = 20;
+        
+        playerCamera.Priority = 10;
+        
+        while (elapsedTime < cameraTransitionDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / cameraTransitionDuration;
+            float curveValue = cameraTransitionCurve.Evaluate(t);
+            
+            // Smooth transition của priority
+            dialogueCamera.Priority = Mathf.RoundToInt(Mathf.Lerp(startPriority, targetPriority, curveValue));
+            
+            yield return null;
+        }
+        
+        dialogueCamera.Priority = targetPriority;
+        
+        // Hiển thị UI dialogue sau khi camera đã chuyển xong
+        dialogueUI.SetActive(true);
+        
+        // Hiển thị dòng đầu tiên
+        ShowLine();
+        
+        isTransitioning = false;
+        Debug.Log("Hoàn thành chuyển camera hội thoại.");
+    }
+    
+    IEnumerator SwitchToPlayerCameraSmooth()
+    {
+        isTransitioning = true;
+        Debug.Log("Bắt đầu chuyển về camera người chơi mượt mà.");
+        
+        // Ẩn UI dialogue trước
+        dialogueUI.SetActive(false);
+        
+        // Chuyển độ ưu tiên camera với hiệu ứng mượt
+        float elapsedTime = 0f;
+        int startPriority = playerCamera.Priority;
+        int targetPriority = 20;
+        
+        dialogueCamera.Priority = 10;
+        
+        while (elapsedTime < cameraTransitionDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / cameraTransitionDuration;
+            float curveValue = cameraTransitionCurve.Evaluate(t);
+            
+            // Smooth transition của priority
+            playerCamera.Priority = Mathf.RoundToInt(Mathf.Lerp(startPriority, targetPriority, curveValue));
+            
+            yield return null;
+        }
+        
+        playerCamera.Priority = targetPriority;
+        
+        // Kích hoạt lại điều khiển người chơi sau khi camera đã chuyển xong
+        //EnablePlayerController();
+            
+        isTransitioning = false;
+        Debug.Log("Hoàn thành chuyển về camera người chơi.");
+    }
+    
+    // Phương thức để vô hiệu hóa PlayerController một cách an toàn
+    void DisablePlayerController()
+    {
+        if (player != null)
+        {
+            MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour script in scripts)
+            {
+                string scriptName = script.GetType().Name.ToLower();
+                if (scriptName.Contains("player") || scriptName.Contains("controller") || scriptName.Contains("movement"))
+                {
+                    script.enabled = false;
+                    Debug.Log("Đã vô hiệu hóa script: " + script.GetType().Name);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Không tìm thấy GameObject với tag: " + playerTag);
+        }
+    }
+    
+    // Phương thức để kích hoạt lại PlayerController một cách an toàn
+    void EnablePlayerController()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+        if (player != null)
+        {
+            MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour script in scripts)
+            {
+                string scriptName = script.GetType().Name.ToLower();
+                if (scriptName.Contains("player") || scriptName.Contains("controller") || scriptName.Contains("movement"))
+                {
+                    script.enabled = true;
+                    Debug.Log("Đã kích hoạt lại script: " + script.GetType().Name);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Không tìm thấy GameObject với tag: " + playerTag);
+        }
+    }
+    
+    // Phương thức legacy để tương thích ngược (nếu cần)
+    void SwitchToDialogueCamera()
+    {
+        dialogueCamera.Priority = 20;
+        playerCamera.Priority = 10;
+    }
+    
+    void SwitchToPlayerCamera()
+    {
+        dialogueCamera.Priority = 10;
+        playerCamera.Priority = 20;
+    }
+}
