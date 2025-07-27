@@ -335,7 +335,7 @@ namespace InventoryPlus
             
             // Background của dialog
             Image dialogBg = currentConfirmationDialog.AddComponent<Image>();
-            dialogBg.sprite = Resources.Load<Sprite>("Btn_Rectangle00_n_Navy");
+            dialogBg.sprite = Resources.Load<Sprite>("Btn_MenuButton_Rectangle00_n");
             dialogBg.color = new Color(0.1f, 0.1f, 0.1f, 0.95f);
             
             // Layout cho dialog
@@ -422,7 +422,7 @@ namespace InventoryPlus
             
             Button button = buttonObj.AddComponent<Button>();
             Image buttonImage = buttonObj.AddComponent<Image>();
-            buttonImage.sprite = Resources.Load<Sprite>("28button_green");
+            buttonImage.sprite = Resources.Load<Sprite>(buttonText == "Đồng ý" ? "28button_green" : "30button_red");
             buttonImage.color = buttonColor;
             button.targetGraphic = buttonImage;
             buttonObj.transform.localScale = Vector3.one;
