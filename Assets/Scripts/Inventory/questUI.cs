@@ -1,74 +1,231 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using TMPro;
-namespace InventoryPlus
+
+public class QuestUIItem : MonoBehaviour
 {
-    public class QuestUI : MonoBehaviour
+    [Header("UI Components")]
+    public Image questIcon;
+    public TextMeshProUGUI questTitle;
+    public TextMeshProUGUI questDescription;
+    public TextMeshProUGUI progressText;
+    public Slider progressBar;
+    public Button claimButton;
+    public GameObject progressPanel;
+    public GameObject completedPanel;
+    
+    [Header("Reward Display")]
+    public TextMeshProUGUI coinRewardText;
+    public TextMeshProUGUI gemRewardText;
+    public TextMeshProUGUI expRewardText;
+    public Image coinIcon;
+    public Image gemIcon;
+    public Image expIcon;
+    
+    [Header("Visual States")]
+    public Color normalColor = Color.white;
+    public Color completedColor = Color.green;
+    public Color claimedColor = Color.gray;
+
+    private Quest currentQuest;
+    private QuestManager questManager;
+    private Image backgroundImage;
+
+    private void Awake()
     {
-        [Header("UI Components")]
-        public TextMeshProUGUI titleText;
-        public TextMeshProUGUI descriptionText;
-        public TextMeshProUGUI progressText;
-        public Slider progressBar;
-        public TextMeshProUGUI rewardText;
-        public Button completeButton;
-        public Image backgroundImage;
+        backgroundImage = GetComponent<Image>();
+        SetupClaimButton();
+    }
 
-        private Quest currentQuest;
-
-        public void SetupQuest(Quest quest)
+    private void SetupClaimButton()
+    {
+        if (claimButton != null)
         {
-            currentQuest = quest;
+            claimButton.onClick.AddListener(ClaimReward);
+        }
+    }
 
-            if (titleText != null)
-                titleText.text = quest.title;
+    public void SetupQuestItem(Quest quest, QuestManager manager)
+    {
+        currentQuest = quest;
+        questManager = manager;
+        UpdateQuestDisplay();
+    }
 
-            if (descriptionText != null)
-                descriptionText.text = quest.description;
+    public void UpdateQuestDisplay()
+    {
+        if (currentQuest == null) return;
 
-            if (progressText != null)
-                progressText.text = $"{quest.currentAmount}/{quest.targetAmount}";
+        // Cập nhật thông tin cơ bản
+        if (questTitle != null)
+            questTitle.text = currentQuest.title;
+        
+        if (questDescription != null)
+            questDescription.text = currentQuest.description;
 
-            if (progressBar != null)
-            {
-                progressBar.value = quest.GetProgressPercent();
-            }
+        // Cập nhật icon
+        if (questIcon != null && currentQuest.icon != null)
+            questIcon.sprite = currentQuest.icon;
 
-            if (rewardText != null)
-                rewardText.text = $"Phần thưởng: {quest.rewardExp} EXP, {quest.rewardGold} Gold";
+        // Cập nhật progress
+        UpdateProgress();
+        
+        // Cập nhật reward display
+        UpdateRewardDisplay();
+        
+        // Cập nhật visual state
+        UpdateVisualState();
+    }
 
-            if (completeButton != null)
-            {
-                completeButton.gameObject.SetActive(quest.isCompleted);
-                completeButton.onClick.RemoveAllListeners();
-                completeButton.onClick.AddListener(() => OnCompleteButtonClicked());
-            }
+    public void UpdateProgress()
+    {
+        if (currentQuest == null) return;
 
-            // Thay đổi màu nền dựa trên trạng thái hoàn thành
-            if (backgroundImage != null)
-            {
-                if (quest.isCompleted)
-                    backgroundImage.color = new Color(0.7f, 1f, 0.7f, 0.8f); // Màu xanh nhạt
-                else
-                    backgroundImage.color = new Color(1f, 1f, 1f, 0.8f); // Màu trắng
-            }
+        // Cập nhật progress bar
+        if (progressBar != null)
+        {
+            progressBar.value = currentQuest.ProgressPercentage;
         }
 
-        void OnCompleteButtonClicked()
+        // Cập nhật progress text
+        if (progressText != null)
         {
-            if (currentQuest != null && currentQuest.isCompleted)
-            {
-                QuestManager questManager = FindFirstObjectByType<QuestManager>();
-                if (questManager != null)
-                {
-                    questManager.CompleteQuest(currentQuest);
-                }
+            progressText.text = $"{currentQuest.currentProgress}/{currentQuest.requiredProgress}";
+        }
 
-                // Ẩn button sau khi hoàn thành
-                if (completeButton != null)
-                    completeButton.gameObject.SetActive(false);
-            }
+        // Hiển thị panel tương ứng
+        UpdatePanelVisibility();
+    }
+
+    private void UpdateRewardDisplay()
+    {
+        if (currentQuest?.reward == null) return;
+
+        // Hiển thị coin reward
+        if (coinRewardText != null && currentQuest.reward.coins > 0)
+        {
+            coinRewardText.text = currentQuest.reward.coins.ToString();
+            coinIcon.gameObject.SetActive(true);
+        }
+        else if (coinIcon != null)
+        {
+            coinIcon.gameObject.SetActive(false);
+        }
+
+        // Hiển thị gem reward
+        if (gemRewardText != null && currentQuest.reward.gems > 0)
+        {
+            gemRewardText.text = currentQuest.reward.gems.ToString();
+            gemIcon.gameObject.SetActive(true);
+        }
+        else if (gemIcon != null)
+        {
+            gemIcon.gameObject.SetActive(false);
+        }
+
+        // Hiển thị exp reward
+        if (expRewardText != null && currentQuest.reward.experience > 0)
+        {
+            expRewardText.text = currentQuest.reward.experience.ToString();
+            expIcon.gameObject.SetActive(true);
+        }
+        else if (expIcon != null)
+        {
+            expIcon.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdatePanelVisibility()
+    {
+        if (currentQuest == null) return;
+
+        switch (currentQuest.status)
+        {
+            case QuestStatus.InProgress:
+                if (progressPanel != null) progressPanel.SetActive(true);
+                if (completedPanel != null) completedPanel.SetActive(false);
+                if (claimButton != null) claimButton.gameObject.SetActive(false);
+                break;
+
+            case QuestStatus.Completed:
+                if (progressPanel != null) progressPanel.SetActive(false);
+                if (completedPanel != null) completedPanel.SetActive(true);
+                if (claimButton != null) 
+                {
+                    claimButton.gameObject.SetActive(true);
+                    claimButton.interactable = true;
+                }
+                break;
+
+            case QuestStatus.Claimed:
+                if (progressPanel != null) progressPanel.SetActive(false);
+                if (completedPanel != null) completedPanel.SetActive(true);
+                if (claimButton != null) 
+                {
+                    claimButton.gameObject.SetActive(true);
+                    claimButton.interactable = false;
+                }
+                break;
+        }
+    }
+
+    private void UpdateVisualState()
+    {
+        if (currentQuest == null || backgroundImage == null) return;
+
+        switch (currentQuest.status)
+        {
+            case QuestStatus.InProgress:
+                backgroundImage.color = normalColor;
+                break;
+            case QuestStatus.Completed:
+                backgroundImage.color = completedColor;
+                break;
+            case QuestStatus.Claimed:
+                backgroundImage.color = claimedColor;
+                break;
+        }
+    }
+
+    private void ClaimReward()
+    {
+        if (currentQuest != null && questManager != null && currentQuest.CanClaim)
+        {
+            questManager.ClaimQuestReward(currentQuest);
+            UpdateQuestDisplay();
+            
+            // Hiệu ứng claim reward
+            ShowClaimEffect();
+        }
+    }
+
+    private void ShowClaimEffect()
+    {
+        // Implement claim effect (animation, particles, etc.)
+        if (claimButton != null)
+        {
+            // Tạo hiệu ứng scale
+            LeanTween.scale(claimButton.gameObject, Vector3.one * 1.2f, 0.1f)
+                .setEase(LeanTweenType.easeOutQuad)
+                .setOnComplete(() => {
+                    LeanTween.scale(claimButton.gameObject, Vector3.one, 0.1f)
+                        .setEase(LeanTweenType.easeInQuad);
+                });
+        }
+    }
+
+    public string GetQuestId()
+    {
+        return currentQuest?.id ?? "";
+    }
+
+    // Method để test quest progress (có thể gọi từ button trong editor)
+    [ContextMenu("Test Quest Progress")]
+    public void TestQuestProgress()
+    {
+        if (currentQuest != null && questManager != null)
+        {
+            questManager.UpdateQuestProgress(currentQuest.type, 10);
         }
     }
 }
