@@ -97,7 +97,7 @@ public class DialogueManager : MonoBehaviour
         {
             // Đặt vị trí camera để nhìn NPC từ góc đẹp
             Vector3 npcPosition = npc.position;
-            Vector3 cameraOffset = new Vector3(0.0f, 1.5f, 2f); // Có thể điều chỉnh offset này
+            Vector3 cameraOffset = new Vector3(2.0f, 1.5f, 2f); // Có thể điều chỉnh offset này
             
             dialogueCamera.transform.position = npcPosition + cameraOffset;
             dialogueCamera.transform.LookAt(npcPosition + Vector3.up * 1.5f); // Nhìn về mặt NPC
