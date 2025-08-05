@@ -65,7 +65,7 @@ public class GameUIController : MonoBehaviour
             if (coinText != null) coinText.text = CurrencyManager.Instance.coins.ToString();
             if (gemText != null) gemText.text = CurrencyManager.Instance.gems.ToString();
             if (goldText != null) goldText.text = CurrencyManager.Instance.gold.ToString();
-            Debug.Log("Coins: " + CurrencyManager.Instance.coins);
+            //Debug.Log("Coins: " + CurrencyManager.Instance.coins);
         }
     }
     
