@@ -82,7 +82,7 @@ namespace InventoryPlus
 
         public void SelectTab(int tabIndex)
         {
-            Debug.Log("Selecting tab: " + tabIndex + " | Current tab: " + currentSelectedTab + " | Allow toggle: " + allowToggleOff);
+
             
             // Kiểm tra nếu tab system bị tắt
             if (!isTabSystemActive)
@@ -203,10 +203,6 @@ namespace InventoryPlus
             }
 
             Debug.Log($"Collected {tabUIElements.Count} UI elements for tab system");
-            foreach (GameObject element in tabUIElements)
-            {
-                Debug.Log("UI Element: " + element.name);
-            }
         }
 
         // Toggle toàn bộ tab system on/off

@@ -1,293 +1,241 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
 using System.Collections.Generic;
-using TMPro;
-
-namespace InventoryPlus
+using UnityEngine;
+using InventoryPlus;
+[System.Serializable]
+public enum QuestType
 {
-    // Script chính để quản lý hệ thống nhiệm vụ với Scroll View
-    public class QuestManager : MonoBehaviour
+    KillMonsters,
+    CollectItems,
+    Build,
+    ClimbRanks,
+    OpenNewStage,
+    DailyMission
+}
+
+[System.Serializable]
+public enum QuestStatus
+{
+    NotStarted,
+    InProgress,
+    Completed,
+    Claimed
+}
+
+[System.Serializable]
+public class QuestReward : ScriptableObject
+{
+    public int coins;
+    public int gems;
+    public int experience;
+    public List<RewardItemEntry> items;
+}
+
+[System.Serializable]
+public class RewardItemEntry
+{
+    public Item item;         // Tham chiếu đến Item (ScriptableObject hoặc Prefab)
+    public int quantity;      // Số lượng item
+}
+
+[System.Serializable]
+public class Quest : ScriptableObject
+{
+    public string id;
+    public string title;
+    public string description;
+    public QuestType type;
+    public QuestStatus status;
+    public int currentProgress;
+    public int requiredProgress;
+    public QuestReward reward;
+    public Sprite icon;
+    public bool isDaily;
+    public DateTime expiryTime;
+
+    public float ProgressPercentage => (float)currentProgress / requiredProgress;
+    public bool IsCompleted => currentProgress >= requiredProgress;
+    public bool CanClaim => IsCompleted && status == QuestStatus.InProgress;
+}
+
+public class QuestManager : MonoBehaviour
+{
+    [Header("Quest Configuration")]
+    public List<Quest> allQuests = new List<Quest>();
+    public List<Quest> activeQuests = new List<Quest>();
+    public List<Quest> dailyQuests = new List<Quest>();
+
+    // [Header("Events")]
+    public static event Action<Quest> OnQuestCompleted;
+    public static event Action<Quest> OnQuestProgressUpdated;
+    public static event Action<Quest> OnQuestClaimed;
+    public static event Action OnQuestListUpdated;
+
+    private void Start()
     {
-        [Header("UI References")]
-        public Button mainQuestButton;
-        public Button dailyQuestButton;
-        public ScrollRect questScrollView;  // Thay đổi: Thêm ScrollRect reference
-        public Transform questContainer;    // Đây sẽ là Content của ScrollView
-        public GameObject questPrefab;
-        public TextMeshProUGUI headerText;
-        
-        [Header("Button Colors")]
-        public Color activeButtonColor = new Color(0.2f, 0.7f, 1f, 1f);
-        public Color inactiveButtonColor = new Color(0.8f, 0.8f, 0.8f, 1f);
-        
-        [Header("Quest Data")]
-        public List<Quest> mainQuests = new List<Quest>();
-        public List<Quest> dailyQuests = new List<Quest>();
-        
-        [Header("Scroll Settings")]
-        public float questItemHeight = 200f;  // Chiều cao của mỗi quest item
-        public float spacing = 10f;          // Khoảng cách giữa các quest items
-        
-        private bool showingMainQuests = true;
-        private List<GameObject> currentQuestObjects = new List<GameObject>();
-        
-        void Start()
-        {
-            Debug.Log("QuestManager Start - Initializing quests and UI.");
-            InitializeQuests();
-            SetupUI();
-            SetupScrollView();
-            DisplayQuests();
-        }
-        
-        void InitializeQuests()
-        {
-            // Khởi tạo nhiệm vụ chính
-            mainQuests.Add(new Quest("Khám Phá Thế Giới", "Khám phá 5 khu vực mới", 5, 500, 100));
-            mainQuests.Add(new Quest("Thành Thạo Chiến Đấu", "Đánh bại 50 kẻ thù", 50, 1000, 200));
-            mainQuests.Add(new Quest("Thu Thập Kho Báu", "Thu thập 20 vật phẩm quý hiếm", 20, 800, 300));
-            mainQuests.Add(new Quest("Nâng Cấp Trang Bị", "Nâng cấp vũ khí lên cấp 10", 10, 1200, 500));
-            mainQuests.Add(new Quest("Chinh Phục Boss", "Đánh bại 3 boss mạnh", 3, 2000, 1000));
-            mainQuests.Add(new Quest("Hoàn Thành Dungeon", "Vượt qua 10 dungeon", 10, 1500, 750));
-            
-            // Khởi tạo nhiệm vụ hàng ngày
-            dailyQuests.Add(new Quest("Tập Luyện Hàng Ngày", "Hoàn thành 3 trận đấu", 3, 200, 50));
-            dailyQuests.Add(new Quest("Thu Hoạch Tài Nguyên", "Thu thập 15 tài nguyên", 15, 150, 30));
-            dailyQuests.Add(new Quest("Giao Lưu Bạn Bè", "Tham gia 2 hoạt động cùng bạn", 2, 100, 25));
-            dailyQuests.Add(new Quest("Hoàn Thành Thử Thách", "Vượt qua 1 thử thách khó", 1, 300, 75));
-            dailyQuests.Add(new Quest("Săn Lùng Quái Vật", "Tiêu diệt 25 quái vật", 25, 250, 60));
-            dailyQuests.Add(new Quest("Thu Thập Nguyên Liệu", "Thu thập 30 nguyên liệu chế tạo", 30, 180, 40));
-            dailyQuests.Add(new Quest("Tăng Cường Kỹ Năng", "Sử dụng kỹ năng đặc biệt 5 lần", 5, 120, 35));
-            
-            // Tạo tiến độ ngẫu nhiên cho demo
-            foreach (var quest in mainQuests)
-            {
-                quest.UpdateProgress(Random.Range(0, quest.targetAmount));
-            }
-            
-            foreach (var quest in dailyQuests)
-            {
-                quest.UpdateProgress(Random.Range(0, quest.targetAmount));
-            }
-        }
-        
-        void SetupUI()
-        {
-            if (mainQuestButton != null)
-            {
-                mainQuestButton.onClick.AddListener(() => ShowMainQuests());
-            }
-            
-            if (dailyQuestButton != null)
-            {
-                dailyQuestButton.onClick.AddListener(() => ShowDailyQuests());
-            }
-            
-            UpdateButtonAppearance();
-            UpdateHeaderText();
-        }
-        
-        void SetupScrollView()
-        {
-            Debug.Log(questScrollView != null ? "Quest ScrollView found." : "Quest ScrollView is null.");
-            // Đảm bảo ScrollView được thiết lập đúng cách
-            if (questScrollView != null)
-            {
-                // Thiết lập scroll direction (vertical)
-                questScrollView.horizontal = false;
-                questScrollView.vertical = true;
+        InitializeQuests();
+        LoadQuestProgress();
+    }
 
-                // Thiết lập content container nếu chưa có
-                if (questContainer == null && questScrollView.content != null)
-                {
-                    questContainer = questScrollView.content;
-                }
+    private void InitializeQuests()
+    {
+        // Tạo các quest mẫu
+        CreateSampleQuests();
+        RefreshDailyQuests();
+    }
 
-                // Thiết lập VerticalLayoutGroup cho content
-                SetupContentLayoutGroup();
-            }
-        }
-        
-        void SetupContentLayoutGroup()
+    private void CreateSampleQuests()
+    {
+        // Kill 100 monsters quest
+        Quest killQuest = new Quest
         {
-            Debug.Log(questContainer != null ? "Quest container found." : "Quest container is null.");
-            if (questContainer != null)
-            {
-                // Thêm VerticalLayoutGroup nếu chưa có
-                VerticalLayoutGroup layoutGroup = questContainer.GetComponent<VerticalLayoutGroup>();
-                if (layoutGroup == null)
-                {
-                    layoutGroup = questContainer.gameObject.AddComponent<VerticalLayoutGroup>();
-                }
+            id = "kill_100_monsters",
+            title = "Kill 100 monsters",
+            description = "Defeat 100 enemies to complete this quest",
+            type = QuestType.KillMonsters,
+            status = QuestStatus.InProgress,
+            currentProgress = 45,
+            requiredProgress = 100,
+            reward = new QuestReward { coins = 1000, experience = 500 },
+            isDaily = false
+        };
 
-                // Thiết lập layout properties
-                layoutGroup.spacing = spacing;
-                layoutGroup.childAlignment = TextAnchor.UpperCenter;
-                layoutGroup.childControlWidth = true;
-                layoutGroup.childControlHeight = false;
-                layoutGroup.childForceExpandWidth = true;
-                layoutGroup.childForceExpandHeight = false;
+        // Open New Stage quest
+        Quest stageQuest = new Quest
+        {
+            id = "open_new_stage",
+            title = "Open New Stage",
+            description = "Unlock and access a new stage",
+            type = QuestType.OpenNewStage,
+            status = QuestStatus.InProgress,
+            currentProgress = 1,
+            requiredProgress = 1,
+            reward = new QuestReward { gems = 50, experience = 200 },
+            isDaily = false
+        };
 
-                // Thêm ContentSizeFitter để tự động điều chỉnh kích thước content
-                ContentSizeFitter sizeFitter = questContainer.GetComponent<ContentSizeFitter>();
-                if (sizeFitter == null)
+        // Collect Golds quest
+        Quest goldQuest = new Quest
+        {
+            id = "collect_golds",
+            title = "Collect Golds",
+            description = "Gather gold coins from battles",
+            type = QuestType.CollectItems,
+            status = QuestStatus.InProgress,
+            currentProgress = 750,
+            requiredProgress = 1000,
+            reward = new QuestReward { coins = 500, gems = 25 },
+            isDaily = false
+        };
+
+        // Level Up quest
+        Quest levelQuest = new Quest
+        {
+            id = "level_up",
+            title = "Level Up",
+            description = "Reach the next character level",
+            type = QuestType.Build,
+            status = QuestStatus.InProgress,
+            currentProgress = 80,
+            requiredProgress = 100,
+            reward = new QuestReward { experience = 1000, gems = 100 },
+            isDaily = false
+        };
+
+        // Climb the ranks quest
+        Quest rankQuest = new Quest
+        {
+            id = "climb_ranks",
+            title = "Climb the ranks",
+            description = "Improve your ranking position",
+            type = QuestType.KillMonsters,
+            status = QuestStatus.NotStarted,
+            currentProgress = 0,
+            requiredProgress = 5,
+            reward = new QuestReward { coins = 2000 },
+            isDaily = false
+        };
+
+        allQuests.AddRange(new[] { killQuest, stageQuest, goldQuest, levelQuest, rankQuest });
+        activeQuests.AddRange(allQuests);
+    }
+
+    public void UpdateQuestProgress(QuestType questType, int amount = 1)
+    {
+        foreach (Quest quest in activeQuests)
+        {
+            if (quest.type == questType && quest.status == QuestStatus.InProgress)
+            {
+                quest.currentProgress = Mathf.Min(quest.currentProgress + amount, quest.requiredProgress);
+                OnQuestProgressUpdated?.Invoke(quest);
+
+                if (quest.IsCompleted && quest.status == QuestStatus.InProgress)
                 {
-                    sizeFitter = questContainer.gameObject.AddComponent<ContentSizeFitter>();
-                }
-                sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-                sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            }
-        }
-        
-        void UpdateButtonAppearance()
-        {
-            if (mainQuestButton != null)
-            {
-                var mainButtonImage = mainQuestButton.GetComponent<Image>();
-                if (mainButtonImage != null)
-                {
-                    mainButtonImage.color = showingMainQuests ? activeButtonColor : inactiveButtonColor;
-                }
-            }
-            
-            if (dailyQuestButton != null)
-            {
-                var dailyButtonImage = dailyQuestButton.GetComponent<Image>();
-                if (dailyButtonImage != null)
-                {
-                    dailyButtonImage.color = !showingMainQuests ? activeButtonColor : inactiveButtonColor;
+                    quest.status = QuestStatus.Completed;
+                    OnQuestCompleted?.Invoke(quest);
                 }
             }
         }
         
-        void UpdateHeaderText()
+        OnQuestListUpdated?.Invoke();
+    }
+
+    public void ClaimQuestReward(Quest quest)
+    {
+        if (quest.CanClaim)
         {
-            if (headerText != null)
-            {
-                headerText.text = showingMainQuests ? "NHIỆM VỤ CHÍNH" : "NHIỆM VỤ HÀNG NGÀY";
-            }
+            // Thêm reward vào inventory/player stats
+            GiveReward(quest.reward);
+            quest.status = QuestStatus.Claimed;
+            OnQuestClaimed?.Invoke(quest);
+            OnQuestListUpdated?.Invoke();
         }
-        
-        public void ShowMainQuests()
-        {
-            if (!showingMainQuests)
-            {
-                showingMainQuests = true;
-                UpdateButtonAppearance();
-                UpdateHeaderText();
-                DisplayQuests();
-                ResetScrollPosition();
-            }
-        }
-        
-        public void ShowDailyQuests()
-        {
-            if (showingMainQuests)
-            {
-                showingMainQuests = false;
-                UpdateButtonAppearance();
-                UpdateHeaderText();
-                DisplayQuests();
-                ResetScrollPosition();
-            }
-        }
-        
-        void ResetScrollPosition()
-        {
-            // Reset scroll position về đầu danh sách
-            if (questScrollView != null)
-            {
-                questScrollView.verticalNormalizedPosition = 1f;
-            }
-        }
-        
-        void DisplayQuests()
-        {
-            // Xóa các quest object cũ
-            foreach (GameObject obj in currentQuestObjects)
-            {
-                if (obj != null)
-                    DestroyImmediate(obj);
-            }
-            currentQuestObjects.Clear();
-            
-            // Hiển thị quest mới
-            List<Quest> questsToShow = showingMainQuests ? mainQuests : dailyQuests;
-            
-            foreach (Quest quest in questsToShow)
-            {
-                GameObject questObj = Instantiate(questPrefab, questContainer);
-                QuestUI questUI = questObj.GetComponent<QuestUI>();
-                
-                // Thiết lập kích thước cho quest item
-                RectTransform questRect = questObj.GetComponent<RectTransform>();
-                if (questRect != null)
-                {
-                    questRect.sizeDelta = new Vector2(questRect.sizeDelta.x, questItemHeight);
-                }
-                
-                if (questUI != null)
-                {
-                    questUI.SetupQuest(quest);
-                }
-                
-                currentQuestObjects.Add(questObj);
-            }
-            
-            // Force layout rebuild để đảm bảo scroll view cập nhật đúng
-            StartCoroutine(ForceLayoutRebuild());
-        }
-        
-        System.Collections.IEnumerator ForceLayoutRebuild()
-        {
-            yield return new WaitForEndOfFrame();
-            if (questContainer != null)
-            {
-                UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(questContainer.GetComponent<RectTransform>());
-            }
-        }
-        
-        // Hàm để cập nhật tiến độ nhiệm vụ từ bên ngoài
-        public void UpdateQuestProgress(string questTitle, int amount)
-        {
-            Quest quest = mainQuests.Find(q => q.title == questTitle);
-            if (quest == null)
-                quest = dailyQuests.Find(q => q.title == questTitle);
-                
-            if (quest != null)
-            {
-                quest.UpdateProgress(amount);
-                DisplayQuests(); // Cập nhật UI
-            }
-        }
-        
-        // Hàm để hoàn thành nhiệm vụ
-        public void CompleteQuest(Quest quest)
-        {
-            if (!quest.isCompleted) return;
-            
-            // Thêm phần thưởng cho người chơi
-            Debug.Log($"Hoàn thành nhiệm vụ: {quest.title}");
-            Debug.Log($"Nhận được: {quest.rewardExp} EXP, {quest.rewardGold} Gold");
-            
-            // Có thể thêm logic xử lý phần thưởng ở đây
-        }
-        
-        // Utility functions cho scroll view
-        public void ScrollToTop()
-        {
-            if (questScrollView != null)
-            {
-                questScrollView.verticalNormalizedPosition = 1f;
-            }
-        }
-        
-        public void ScrollToBottom()
-        {
-            if (questScrollView != null)
-            {
-                questScrollView.verticalNormalizedPosition = 0f;
-            }
-        }
+    }
+
+    private void GiveReward(QuestReward reward)
+    {
+        // Implement reward giving logic here
+        // PlayerManager.Instance.AddCoins(reward.coins);
+        // PlayerManager.Instance.AddGems(reward.gems);
+        // PlayerManager.Instance.AddExperience(reward.experience);
+        Debug.Log($"Rewarded: {reward.coins} coins, {reward.gems} gems, {reward.experience} XP");
+    }
+
+    public List<Quest> GetActiveQuests()
+    {
+        return activeQuests.FindAll(q => q.status != QuestStatus.Claimed);
+    }
+
+    public List<Quest> GetCompletedQuests()
+    {
+        return activeQuests.FindAll(q => q.status == QuestStatus.Completed);
+    }
+
+    public List<Quest> GetDailyQuests()
+    {
+        return dailyQuests;
+    }
+
+    private void RefreshDailyQuests()
+    {
+        // Logic để refresh daily quests
+        dailyQuests.Clear();
+        // Tạo daily quests mới
+    }
+
+    public void LoadQuestProgress()
+    {
+        // Load quest progress from PlayerPrefs or save file
+    }
+
+    public void SaveQuestProgress()
+    {
+        // Save quest progress to PlayerPrefs or save file
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+            SaveQuestProgress();
     }
 }
