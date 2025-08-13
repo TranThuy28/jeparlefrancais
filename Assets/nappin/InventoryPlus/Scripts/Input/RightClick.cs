@@ -149,7 +149,7 @@ namespace InventoryPlus
             
             // Add background
             Image bg = currentMenu.AddComponent<Image>();
-            bg.sprite = Resources.Load<Sprite>("Btn_Rectangle00_n_Navy"); // Replace with your background sprite
+            bg.sprite = Resources.Load<Sprite>("Btn_Rectangle00_nn_Navy"); // Replace with your background sprite
             bg.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
             
             // Add vertical layout
@@ -335,7 +335,7 @@ namespace InventoryPlus
             
             // Background của dialog
             Image dialogBg = currentConfirmationDialog.AddComponent<Image>();
-            dialogBg.sprite = Resources.Load<Sprite>("Btn_MenuButton_Rectangle00_n");
+            dialogBg.sprite = Resources.Load<Sprite>("Btn_Rectangle00_nn_Navy");
             dialogBg.color = new Color(0.1f, 0.1f, 0.1f, 0.95f);
             
             // Layout cho dialog
@@ -380,13 +380,13 @@ namespace InventoryPlus
             buttonContainer.transform.localScale = Vector3.one;
 
             // Tạo Confirm button
-            CreateDialogButton("Đồng ý", buttonContainer, () => {
+            CreateDialogButton("Yes", buttonContainer, () => {
                 onConfirm?.Invoke();
                 HideConfirmationDialog();
             }, new Color(0.2f, 0.7f, 0.2f, 1f));
             
             // Tạo Cancel button
-            CreateDialogButton("Hủy", buttonContainer, () => {
+            CreateDialogButton("No", buttonContainer, () => {
                 onCancel?.Invoke();
                 HideConfirmationDialog();
             }, new Color(0.7f, 0.2f, 0.2f, 1f));
@@ -422,7 +422,7 @@ namespace InventoryPlus
             
             Button button = buttonObj.AddComponent<Button>();
             Image buttonImage = buttonObj.AddComponent<Image>();
-            buttonImage.sprite = Resources.Load<Sprite>(buttonText == "Đồng ý" ? "28button_green" : "30button_red");
+            buttonImage.sprite = Resources.Load<Sprite>(buttonText == "Yes" ? "28button_green" : "30button_red");
             buttonImage.color = buttonColor;
             button.targetGraphic = buttonImage;
             buttonObj.transform.localScale = Vector3.one;
@@ -491,18 +491,21 @@ namespace InventoryPlus
             string itemName = inventorySlot.GetItemType().itemName;
             int totalPrice = inventorySlot.GetItemType().sellingPrice * itemCount;
             
-            string message = $"Bạn có muốn bán tất cả {itemName}?\n" +
-                           $"Số lượng: {itemCount}\n" +
-                           $"Tổng giá: {totalPrice} coins";
+            string message = $"Do you want to sell all {itemName}?\n" +
+                        $"Quantity: {itemCount}\n" +
+                        $"Total price: {totalPrice} coins";
             
-            ShowConfirmationDialog("Xác nhận bán tất cả", message, () => {
-                // Thực hiện bán tất cả
+            ShowConfirmationDialog("Confirm Sell All", message, () => {
+                // Execute sell all
                 gameManager.currencyManager.AddCoins(totalPrice);
                 for (int i = 0; i < itemCount; i++)
                 {
                     inventory.UseItem(slot);
                 }
-                Debug.Log($"Đã bán tất cả {itemCount} {itemName} với giá {totalPrice} coins");
+                
+                // Show success notification instead of debug log
+                string successMessage = $"Successfully sold {itemCount} {itemName} for {totalPrice} coins";
+                // ShowNotification("Sale Complete", successMessage);
             });
         }
         
@@ -516,23 +519,25 @@ namespace InventoryPlus
         private void SellItem(UISlot slot)
         {
             ItemSlot inventorySlot = inventory.GetInventorySlot(slot);
-            string itemName = inventorySlot.GetItemType().name;
+            string itemName = inventorySlot.GetItemType().itemName;
             int sellingPrice = inventorySlot.GetItemType().sellingPrice;
             
-            string message = $"Bạn có muốn bán {itemName}?\n" +
-                           $"Giá bán: {sellingPrice} coins";
+            string message = $"Do you want to sell {itemName}?\n" +
+                        $"Selling price: {sellingPrice} coins";
             
-            ShowConfirmationDialog("Xác nhận bán vật phẩm", message, () => {
-                // Thực hiện bán
+            ShowConfirmationDialog("Confirm Item Sale", message, () => {
+                // Execute sale
                 gameManager.currencyManager.AddCoins(sellingPrice);
                 inventory.UseItem(slot);
-                Debug.Log($"Đã bán {itemName} với giá {sellingPrice} coins");
+                
+                // Show success notification instead of debug log
+                string successMessage = $"Successfully sold {itemName} for {sellingPrice} coins";
+                //ShowNotification("Item Sold", successMessage);
             });
         }
-        
+
         private void SortItem(UISlot slot)
         {
-            Debug.Log("Sorting item: " + slot.name);
             inventory.Sort();
         }
         

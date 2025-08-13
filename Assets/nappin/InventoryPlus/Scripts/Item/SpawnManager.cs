@@ -310,43 +310,43 @@ namespace InventoryPlus
     }
 
     // Editor Tool cho ItemSpawnManager
-    [CustomEditor(typeof(ItemSpawnManager))]
-    public class ItemSpawnManagerEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
+    // [CustomEditor(typeof(ItemSpawnManager))]
+    // public class ItemSpawnManagerEditor : Editor
+    // {
+    //     public override void OnInspectorGUI()
+    //     {
+    //         DrawDefaultInspector();
 
-            ItemSpawnManager manager = (ItemSpawnManager)target;
+    //         ItemSpawnManager manager = (ItemSpawnManager)target;
 
-            if (!Application.isPlaying) return;
+    //         if (!Application.isPlaying) return;
 
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Runtime Info", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField($"Active Items: {manager.GetActiveItemCount()}/{manager.maxActiveItems}");
+    //         EditorGUILayout.Space();
+    //         EditorGUILayout.LabelField("Runtime Info", EditorStyles.boldLabel);
+    //         EditorGUILayout.LabelField($"Active Items: {manager.GetActiveItemCount()}/{manager.maxActiveItems}");
 
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Runtime Controls", EditorStyles.boldLabel);
+    //         EditorGUILayout.Space();
+    //         EditorGUILayout.LabelField("Runtime Controls", EditorStyles.boldLabel);
 
-            if (GUILayout.Button("Spawn Random Item"))
-            {
-                manager.SpawnRandomWeightedItem();
-            }
+    //         if (GUILayout.Button("Spawn Random Item"))
+    //         {
+    //             manager.SpawnRandomWeightedItem();
+    //         }
 
-            if (GUILayout.Button("Clear All Items"))
-            {
-                manager.ClearAllSpawnedItems();
-            }
+    //         if (GUILayout.Button("Clear All Items"))
+    //         {
+    //             manager.ClearAllSpawnedItems();
+    //         }
 
-            EditorGUILayout.Space();
+    //         EditorGUILayout.Space();
 
-            // Chapter control
-            EditorGUILayout.LabelField("Chapter Control", EditorStyles.boldLabel);
-            Item.ItemChapter newChapter = (Item.ItemChapter)EditorGUILayout.EnumPopup("Current Chapter", manager.GetChapterFilter().CurrentChapter);
-            if (newChapter != manager.GetChapterFilter().CurrentChapter)
-            {
-                manager.SetCurrentChapter(newChapter);
-            }
-        }
-    }
+    //         // Chapter control
+    //         EditorGUILayout.LabelField("Chapter Control", EditorStyles.boldLabel);
+    //         Item.ItemChapter newChapter = (Item.ItemChapter)EditorGUILayout.EnumPopup("Current Chapter", manager.GetChapterFilter().CurrentChapter);
+    //         if (newChapter != manager.GetChapterFilter().CurrentChapter)
+    //         {
+    //             manager.SetCurrentChapter(newChapter);
+    //         }
+    //     }
+    // }
 }

@@ -73,7 +73,6 @@ namespace InventoryPlus
                 SelectTab(defaultTab);
             }
             ToggleTabSystem();
-            Debug.Log("TabSystem initialized with " + tabs.Count + " tabs. Default tab: " + defaultTab);
         }
 
         void Update()
@@ -201,7 +200,6 @@ namespace InventoryPlus
                 }
             }
 
-            Debug.Log($"Collected {tabUIElements.Count} UI elements for tab system");
         }
 
         // Toggle toàn bộ tab system on/off
