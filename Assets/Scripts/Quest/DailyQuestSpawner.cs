@@ -26,8 +26,8 @@ public class DailyMissionSpawner : MonoBehaviour
         missionTemplates.Add(new MissionTemplate
         {
             id = "kill_enemies",
-            title = "Monster Hunter",
-            description = "Defeat {0} enemies",
+            title = "Mouse Hunter",
+            description = "Defeat {0} mice",
             type = QuestType.KillMonsters,
             minProgress = 20,
             maxProgress = 100,
@@ -36,18 +36,18 @@ public class DailyMissionSpawner : MonoBehaviour
             weight = 10
         });
 
-        missionTemplates.Add(new MissionTemplate
-        {
-            id = "kill_bosses",
-            title = "Boss Slayer",
-            description = "Defeat {0} bosses",
-            type = QuestType.KillMonsters,
-            minProgress = 2,
-            maxProgress = 5,
-            minReward = 500,
-            maxReward = 1200,
-            weight = 5
-        });
+        // missionTemplates.Add(new MissionTemplate
+        // {
+        //     id = "kill_bosses",
+        //     title = "Boss Slayer",
+        //     description = "Defeat {0} bosses",
+        //     type = QuestType.KillMonsters,
+        //     minProgress = 2,
+        //     maxProgress = 5,
+        //     minReward = 500,
+        //     maxReward = 1200,
+        //     weight = 5
+        // });
 
         // Collection Missions
         missionTemplates.Add(new MissionTemplate
@@ -80,7 +80,7 @@ public class DailyMissionSpawner : MonoBehaviour
         missionTemplates.Add(new MissionTemplate
         {
             id = "build_structures",
-            title = "Master Builder",
+            title = "Craft Items",
             description = "Build {0} structures",
             type = QuestType.Build,
             minProgress = 3,
@@ -90,32 +90,32 @@ public class DailyMissionSpawner : MonoBehaviour
             weight = 6
         });
 
-        missionTemplates.Add(new MissionTemplate
-        {
-            id = "upgrade_items",
-            title = "Equipment Enhancer",
-            description = "Upgrade {0} items",
-            type = QuestType.Build,
-            minProgress = 2,
-            maxProgress = 8,
-            minReward = 350,
-            maxReward = 750,
-            weight = 5
-        });
+        // missionTemplates.Add(new MissionTemplate
+        // {
+        //     id = "upgrade_items",
+        //     title = "Equipment Enhancer",
+        //     description = "Upgrade {0} items",
+        //     type = QuestType.Build,
+        //     minProgress = 2,
+        //     maxProgress = 8,
+        //     minReward = 350,
+        //     maxReward = 750,
+        //     weight = 5
+        // });
 
         // Stage/Level Missions
-        missionTemplates.Add(new MissionTemplate
-        {
-            id = "complete_stages",
-            title = "Stage Master",
-            description = "Complete {0} stages",
-            type = QuestType.Build,
-            minProgress = 2,
-            maxProgress = 5,
-            minReward = 600,
-            maxReward = 1000,
-            weight = 8
-        });
+        // missionTemplates.Add(new MissionTemplate
+        // {
+        //     id = "complete_stages",
+        //     title = "Stage Master",
+        //     description = "Complete {0} stages",
+        //     type = QuestType.Build,
+        //     minProgress = 2,
+        //     maxProgress = 5,
+        //     minReward = 600,
+        //     maxReward = 1000,
+        //     weight = 8
+        // });
 
         // Survival Missions
         missionTemplates.Add(new MissionTemplate
