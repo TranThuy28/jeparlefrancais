@@ -21,12 +21,42 @@ public class DailyMissionManager : MonoBehaviour
     private DateTime nextResetTime;
     private QuestManager questManager;
 
+    public DailyMissionSpawner missionSpawner;
+
+    private void InitializeSpawner()
+    {
+        missionSpawner = GetComponent<DailyMissionSpawner>();
+        if (missionSpawner == null)
+        {
+            missionSpawner = gameObject.AddComponent<DailyMissionSpawner>();
+        }
+    }
+
+    // Updated CreateDailyMissions method
+    private void CreateDailyMissionsWithSpawner()
+    {
+        if (missionSpawner == null)
+            InitializeSpawner();
+
+        dailyMissions.Clear();
+        dailyMissions = missionSpawner.SpawnDailyMissions();
+        Debug.Log($"Spawned {dailyMissions.Count} daily missions using spawner.");
+    }
+
+    // Method to spawn special event missions
+    public void StartSpecialEvent(string eventName)
+    {
+        List<Quest> eventMissions = missionSpawner.SpawnEventMissions(eventName);
+        dailyMissions.AddRange(eventMissions);
+        RefreshDailyMissionUI();
+    }
     private void Start()
     {
         questManager = FindFirstObjectByType<QuestManager>();
         InitializeDailyMissions();
         SetupUI();
         CalculateNextResetTime();
+        InitializeSpawner();
     }
 
     private void Update()
@@ -43,7 +73,7 @@ public class DailyMissionManager : MonoBehaviour
 
     private void InitializeDailyMissions()
     {
-        CreateDailyMissions();
+        CreateDailyMissionsWithSpawner();
         RefreshDailyMissionUI();
     }
 

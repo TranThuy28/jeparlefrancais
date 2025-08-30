@@ -54,7 +54,7 @@ namespace InventoryPlus
             Debug.Log("InputReader Awake - EventSystem: " + (eventSystem != null ? "Found" : "Not Found") + 
                     ", InputModule: " + (inputModule != null ? "Found" : "Not Found"));
             inputModule.horizontalAxis = InventoryOffHorizontalInput;
-            inventory.SelectFirstHotbarSlot();
+            inventory.SelectFirstInventorySlot();
             inventory.ClearSwap();
         }
 
@@ -94,28 +94,7 @@ namespace InventoryPlus
         {
             // Reference to the Input for toggling the Inventory, it is recommended to swap to an InputManager entry: https://www.youtube.com/watch?v=DB5xkz-3nHk
             // Example of a InputManager entry: (Input.GetButtonDown("ToggleInventory"))
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                // inventoryOn = !inventoryOn;
-
-                //ShowCursor(inventoryOn);
-//                player.EnableController(!inventoryOn);
-                // inventory.ShowInventory(inventoryOn);
-                // inventory.ForceEndSwap();
-
-                //inventory open - inventory closed
-                // if (inventoryOn)
-                // {
-                //     inputModule.horizontalAxis = InventoryOnHorizontalInput;
-                //     inventory.SelectFirstInventorySlot();
-                    
-                // }
-                // else
-                // {
-                //     inputModule.horizontalAxis = InventoryOffHorizontalInput;
-                //     inventory.SelectFirstHotbarSlot();
-                // }
-            }
+            
         }
 
 

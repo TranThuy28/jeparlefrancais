@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 namespace InventoryPlus
 {
     public class TabSystem : MonoBehaviour
@@ -67,7 +68,10 @@ namespace InventoryPlus
             }
 
             // Chọn tab mặc định
-            SelectTab(defaultTab);
+            if (currentSelectedTab == -1)
+            {
+                SelectTab(defaultTab);
+            }
             ToggleTabSystem();
         }
 
@@ -77,6 +81,7 @@ namespace InventoryPlus
             if (Input.GetKeyDown(toggleKey))
             {
                 ToggleTabSystem();
+                //Debug.Log("ToggleTabSystem called. Current state: " + isTabSystemActive);
             }
         }
 
@@ -98,13 +103,6 @@ namespace InventoryPlus
                 return;
             }
 
-            // Nếu tab hiện tại đã được chọn và cho phép toggle off
-            if (currentSelectedTab == tabIndex && allowToggleOff)
-            {
-                Debug.Log("Toggling off tab: " + tabIndex);
-                ToggleOffCurrentTab();
-                return;
-            }
             
             // Nếu tab hiện tại đã được chọn và không cho phép toggle off thì không làm gì
             if (currentSelectedTab == tabIndex)
@@ -129,10 +127,10 @@ namespace InventoryPlus
             if (tabs[tabIndex].tabContent != null)
             {
                 tabs[tabIndex].tabContent.SetActive(true);
-                if (tabs[tabIndex].tabContent.name == "(Prb)Inventory")
-                {
-                    tabs[tabIndex].tabContent.GetComponent<Inventory>().ToggleInventory();
-                }
+                // if (tabs[tabIndex].tabContent.name == "(Prb)Inventory")
+                // {
+                //     tabs[tabIndex].tabContent.GetComponent<Inventory>().ToggleInventory();
+                // }
             }
 
             // Đổi màu button thành màu selected
@@ -160,7 +158,7 @@ namespace InventoryPlus
                 if (buttonImage != null)
                 {
                     buttonImage.color = tabs[tabIndex].normalColor;
-                    Debug.Log("Deselected tab: " + tabIndex);
+//                    Debug.Log("Deselected tab: " + tabIndex);
                 }
             }
         }
@@ -202,7 +200,6 @@ namespace InventoryPlus
                 }
             }
 
-            Debug.Log($"Collected {tabUIElements.Count} UI elements for tab system");
         }
 
         // Toggle toàn bộ tab system on/off
@@ -232,6 +229,7 @@ namespace InventoryPlus
                 }
                 else
                 {
+                    Debug.Log("No tab selected, selecting default tab: " + defaultTab);
                     SelectTab(defaultTab);
                 }
                 
@@ -247,7 +245,7 @@ namespace InventoryPlus
                         element.SetActive(false);
                     }
                 }
-                Debug.Log("Tab system disabled");
+//                Debug.Log("Tab system disabled");
             }
         }
 

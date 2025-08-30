@@ -51,7 +51,7 @@ public class DailyRewardSystem : MonoBehaviour
         inventory = FindFirstObjectByType<Inventory>();
         gameManager = FindFirstObjectByType<GameManager>();
         SetRewardClaimed(false);
-        Debug.Log("DailyRewardSystem initialized with DailyMissionManager: " + (dailyMissionManager != null));
+//        Debug.Log("DailyRewardSystem initialized with DailyMissionManager: " + (dailyMissionManager != null));
         audioSource = GetComponent<AudioSource>();
         questReward = new QuestReward { coins = 300 };
         SetupUI();

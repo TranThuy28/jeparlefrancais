@@ -36,8 +36,17 @@ namespace InventoryPlus
 
         private void Awake()
         {
+            Debug.Log("InventoryPlus SaveSystem Awake");
             pathInteractable = Application.persistentDataPath + "/" + SceneManager.GetActiveScene().name + "_Interactable.json";
             pathInventory = Application.persistentDataPath + "/" + "_Inventory.json";
+            if (File.Exists(pathInteractable))
+            {
+                Debug.Log("Found existing interactable save file: " + pathInteractable);
+            }
+            else
+            {
+                Debug.Log("No interactable save file found, creating new one: " + pathInteractable);
+            }
 
             Load();
         }
