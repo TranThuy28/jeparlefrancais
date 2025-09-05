@@ -21,19 +21,45 @@ public class DialogueManager : MonoBehaviour
     [Header("Player Control Settings")]
     public string playerTag = "Player";
     public GameObject player;
+
+    [Header("Animation & Effects")]
+    public bool useTypingEffect = false;
+    public float typingSpeed = 0.03f;
+    public AudioSource dialogueAudioSource;
+    public AudioClip[] typingSounds;
     private string[] lines;
     private int index;
     private bool isTalking;
     private bool isTransitioning;
+    private bool isTyping;
     private Transform npc;
-    
+    private NPCAnimationController currentNPCAnimController;
+
+    public System.Action<int> OnDialogueLineChanged;
+    public System.Action OnDialogueStarted;
+    public System.Action OnDialogueEnded;
     void Awake()
     {
         Instance = this;
         dialogueUI.SetActive(false);
+        SetupInitialState();
         Debug.Log("DialogueManager đã được khởi tạo.");
     }
-    
+    void SetupInitialState()
+    {
+        if (dialogueUI != null)
+            dialogueUI.SetActive(false);
+            
+        // Tự động tìm player nếu chưa gán
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag(playerTag);
+        }
+        
+        // Setup audio
+        if (dialogueAudioSource == null)
+            dialogueAudioSource = GetComponent<AudioSource>();
+    }
     void Update()
     {
         if (isTalking && !isTransitioning && Input.GetKeyDown(KeyCode.K))
@@ -52,11 +78,11 @@ public class DialogueManager : MonoBehaviour
         index = 0;
         isTalking = true;
         
-        // Vô hiệu hóa điều khiển người chơi
-        //DisablePlayerController();
+        // Tìm NPC Animation Controller
+        currentNPCAnimController = npc?.GetComponent<NPCAnimationController>();
             
-        Debug.Log("Bắt đầu hội thoại.");
-        
+        Debug.Log($"Bắt đầu hội thoại. Tổng số dòng: {lines.Length}");
+        OnDialogueStarted?.Invoke();
         // Bắt đầu chuyển camera mượt mà
         StartCoroutine(SwitchToDialogueCameraSmooth());
     }
@@ -65,6 +91,9 @@ public class DialogueManager : MonoBehaviour
     {
         if (index < lines.Length)
         {
+            // Trigger animation event cho dòng hiện tại
+            OnDialogueLineChanged?.Invoke(index);
+
             dialogueText.text = lines[index];
             Debug.Log("Hiển thị lời thoại: " + lines[index]);
             index++;
@@ -82,7 +111,7 @@ public class DialogueManager : MonoBehaviour
         
         isTalking = false;
         Debug.Log("Kết thúc hội thoại.");
-        
+        OnDialogueEnded?.Invoke();
         // Bắt đầu chuyển về camera người chơi mượt mà
         StartCoroutine(SwitchToPlayerCameraSmooth());
     }
@@ -97,7 +126,7 @@ public class DialogueManager : MonoBehaviour
         {
             // Đặt vị trí camera để nhìn NPC từ góc đẹp
             Vector3 npcPosition = npc.position;
-            Vector3 cameraOffset = new Vector3(2.0f, 1.5f, 2f); // Có thể điều chỉnh offset này
+            Vector3 cameraOffset = new Vector3(2.0f, 1.5f, 3f); // Có thể điều chỉnh offset này
             
             dialogueCamera.transform.position = npcPosition + cameraOffset;
             dialogueCamera.transform.LookAt(npcPosition + Vector3.up * 1.5f); // Nhìn về mặt NPC

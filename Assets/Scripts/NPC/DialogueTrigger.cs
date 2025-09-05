@@ -21,17 +21,46 @@ public class DialogueTrigger : MonoBehaviour
     [Header("Debug")]
     public bool showDebugGizmos = true;
     
-    private bool playerInRange;
+    private bool playerInRange = false;
     private bool isDialogueActive;
     private Transform playerTransform;
     private Camera mainCamera;
-    
+    [Header("Animation Settings")]
+    private NPCAnimationController animationController;
+    public bool useAnimations = true;
+    public System.Action OnPlayerEnterRange;
+    public System.Action OnPlayerExitRange;
+    public System.Action OnDialogueStart;
+    public System.Action OnDialogueEnd;
     void Start()
     {
         SetupComponents();
         SetupInteractUI();
+        SetupAnimationController();
+        ForceHideUIAtStart();
     }
-    
+    void ForceHideUIAtStart()
+    {
+        if (interactUI != null)
+        {
+            interactUI.SetActive(false);
+            Debug.Log($"[{npcName}] Force hidden UI at start");
+        }
+        
+        // Đảm bảo trạng thái ban đầu
+        playerInRange = false;
+        isDialogueActive = false;
+    }
+    void SetupAnimationController()
+    {
+        if (!useAnimations) return;
+        
+        animationController = GetComponent<NPCAnimationController>();
+        if (animationController == null && useAnimations)
+        {
+            Debug.LogWarning($"NPC {npcName} được set useAnimations = true nhưng không có NPCAnimationController component.");
+        }
+    }
     void SetupComponents()
     {
         // Tìm DialogueManager nếu chưa được gán
@@ -65,7 +94,7 @@ public class DialogueTrigger : MonoBehaviour
     void SetupInteractUI()
 {
     if (interactUI == null) return;
-
+    interactUI.SetActive(false);
     // Tạo World Canvas nếu chưa có
     if (worldCanvas == null)
     {
@@ -140,11 +169,13 @@ public class DialogueTrigger : MonoBehaviour
             
             if (playerInRange)
             {
-                OnPlayerEnterRange();
+                OnPlayerEnterRange?.Invoke();
+                ShowInteractUI();
             }
             else
             {
-                OnPlayerExitRange();
+                OnPlayerExitRange?.Invoke();
+                HideInteractUI();
             }
         }
     }
@@ -157,8 +188,27 @@ public class DialogueTrigger : MonoBehaviour
             StartDialogue();
         }
     }
+    void ShowInteractUI()
+    {
+        if (!isDialogueActive && interactUI != null)
+        {
+            interactUI.SetActive(true);
+            Debug.Log($"Player đã vào vùng tương tác với {npcName}");
+        }
+    }
     
-    void OnPlayerEnterRange()
+    /// <summary>
+    /// Ẩn Interact UI
+    /// </summary>
+    void HideInteractUI()
+    {
+        if (interactUI != null)
+        {
+            interactUI.SetActive(false);
+            Debug.Log($"Player đã rời vùng tương tác với {npcName}");
+        }
+    }
+    /* void OnPlayerEnterRange()
     {
         Debug.Log("Player đã vào vùng trò chuyện với " + npcName + " (khoảng cách: " + interactionRange + "m)");
 
@@ -183,7 +233,7 @@ public class DialogueTrigger : MonoBehaviour
         // if (isDialogueActive && dialogueManager != null)
         //     dialogueManager.EndDialogue();
     }
-    
+     */
     void StartDialogue()
     {
         if (interactUI != null)
@@ -207,16 +257,40 @@ public class DialogueTrigger : MonoBehaviour
         
         // Bắt đầu dialogue
         isDialogueActive = true;
-        
+        HideInteractUI();
         // Ẩn interact UI
-        
+        OnDialogueStart?.Invoke();
         // Bắt đầu dialogue với DialogueManager
         dialogueManager.StartDialogue(dialogueLines, transform);
         
         // Theo dõi khi dialogue kết thúc
-        StartCoroutine(WaitForDialogueEnd());
+        // StartCoroutine(WaitForDialogueEnd());
+        if (dialogueManager.OnDialogueEnded != null)
+        {
+            dialogueManager.OnDialogueEnded += OnDialogueEnded;
+        }
     }
-    
+    void OnDialogueEnded()
+    {
+        isDialogueActive = false;
+        
+        // Unsubscribe event
+        if (dialogueManager != null && dialogueManager.OnDialogueEnded != null)
+        {
+            dialogueManager.OnDialogueEnded -= OnDialogueEnded;
+        }
+        
+        // Hiển thị lại interact UI nếu player vẫn trong vùng
+        if (playerInRange)
+        {
+            ShowInteractUI();
+        }
+        
+        // Trigger event
+        OnDialogueEnd?.Invoke();
+        
+        Debug.Log($"Đã kết thúc hội thoại với {npcName}");
+    }
     System.Collections.IEnumerator WaitForDialogueEnd()
     {
         // Chờ cho đến khi dialogue kết thúc
