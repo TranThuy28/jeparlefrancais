@@ -11,6 +11,10 @@ public class ManualCharacterController : MonoBehaviour
     public Transform cameraTransform;
     public Animator animator;
 
+    [Header("Cutscene Control")]
+    [Tooltip("Set to false during cutscenes to disable gravity")]
+    public bool enableGravity = true;
+    
     private CharacterController controller;
     private float gravity = -9.81f;
     private float verticalVelocity = 0f;
@@ -32,6 +36,7 @@ public class ManualCharacterController : MonoBehaviour
 
     void Update()
     {
+        if (controller == null || !controller.enabled) return;
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         Vector3 inputDir = new Vector3(h, 0, v).normalized;
@@ -57,14 +62,22 @@ public class ManualCharacterController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
         }
 
-        // Xử lý trọng lực
-        if (controller.isGrounded)
+        // FIX: Chỉ xử lý trọng lực khi enableGravity = true
+        if (enableGravity)
         {
-            verticalVelocity = -2f;
+            if (controller.isGrounded)
+            {
+                verticalVelocity = -2f;
+            }
+            else
+            {
+                verticalVelocity += gravity * Time.deltaTime;
+            }
         }
         else
         {
-            verticalVelocity += gravity * Time.deltaTime;
+            // Trong cutscene: giữ vertical velocity ở mức tối thiểu để dính mặt đất
+            verticalVelocity = controller.isGrounded ? -2f : 0f;
         }
 
         // Tổng vector di chuyển
@@ -73,7 +86,26 @@ public class ManualCharacterController : MonoBehaviour
 
 
     }
-
+    // PUBLIC METHODS cho CutsceneManager
+    public void DisableGravity()
+    {
+        enableGravity = false;
+        verticalVelocity = controller.isGrounded ? -2f : 0f;
+        Debug.Log("Gravity disabled for cutscene");
+    }
+    
+    public void EnableGravity()
+    {
+        enableGravity = true;
+        verticalVelocity = controller.isGrounded ? -2f : 0f;
+        Debug.Log("Gravity enabled after cutscene");
+    }
+    
+    public void ResetVerticalVelocity()
+    {
+        verticalVelocity = -2f;
+        Debug.Log("Vertical velocity reset");
+    }
     private Vector3 AdjustVelocityToSlope(Vector3 velocity)
 {
     Ray ray = new Ray(transform.position, Vector3.down);
