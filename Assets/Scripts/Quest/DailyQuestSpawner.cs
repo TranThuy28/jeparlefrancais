@@ -137,14 +137,12 @@ public class DailyMissionSpawner : MonoBehaviour
         List<Quest> newMissions = new List<Quest>();
         List<MissionTemplate> availableTemplates = new List<MissionTemplate>(missionTemplates);
         DateTime nextResetTime = CalculateNextResetTime();
-        Debug.Log($"Daily mission count: {availableTemplates.Count}");
         for (int i = 0; i < dailyMissionCount; i++)
         {
             if (availableTemplates.Count == 0) break;
 
             MissionTemplate selectedTemplate = SelectRandomTemplate(availableTemplates);
             Quest newMission = CreateMissionFromTemplate(selectedTemplate, nextResetTime);
-            Debug.Log($"Spawned daily mission: {newMission.title}");
             newMissions.Add(newMission);
             availableTemplates.Remove(selectedTemplate); // Prevent duplicate missions
         }
