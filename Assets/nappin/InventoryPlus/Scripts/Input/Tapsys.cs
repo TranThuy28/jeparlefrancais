@@ -206,7 +206,7 @@ namespace InventoryPlus
         public void ToggleTabSystem()
         {
             isTabSystemActive = !isTabSystemActive;
-            
+            ShowCursor(isTabSystemActive);
             if (isTabSystemActive)
             {
                 // Bật tab system - hiện tất cả UI elements
@@ -247,6 +247,20 @@ namespace InventoryPlus
                 }
 //                Debug.Log("Tab system disabled");
             }
+        }
+        
+        private void ShowCursor(bool _show)
+        {
+                if (_show)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
         }
 
         // Kiểm tra xem GameObject có phải là tab button không

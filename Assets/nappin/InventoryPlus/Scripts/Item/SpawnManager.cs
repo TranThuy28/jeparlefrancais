@@ -201,6 +201,7 @@ namespace InventoryPlus
             spawnedObject.transform.rotation = Quaternion.identity;
 
             spawnedObject.AddComponent<ItemCollectable>();
+            spawnedObject.GetComponent<ItemCollectable>().itemData = item;
 
             // Thêm vào tracker
             SpawnedItemTracker tracker = new SpawnedItemTracker(spawnedObject, item, spawnLocation);

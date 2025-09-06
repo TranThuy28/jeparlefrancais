@@ -16,7 +16,7 @@ MonoBehaviour:
   itemPrefab: {fileID: 1598607177582012, guid: a6a0ba3c587f6784487429592af95bbb, type: 3}
   itemChapter: 0
   itemName: Brique
-  itemID: 1
+  itemID: 0
   itemCategory: material
   isStackable: 1
   stackSize: 9999

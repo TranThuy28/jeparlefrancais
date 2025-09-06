@@ -16,7 +16,7 @@ MonoBehaviour:
   itemPrefab: {fileID: 1039872785135470, guid: 6dd867f5eb239ad45989b6a22d014e6b, type: 3}
   itemChapter: 0
   itemName: Coach
-  itemID: 
+  itemID: 1
   itemCategory: 
   isStackable: 0
   stackSize: 9999

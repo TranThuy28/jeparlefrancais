@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using InventoryPlus;
 using System;
 using UnityEditor;
+using UnityEditor.Rendering;
 
 namespace InventoryPlus
 {
@@ -18,6 +19,9 @@ namespace InventoryPlus
         public List<ItemSlot> inputItems = new List<ItemSlot>();
         public List<CraftingRecipe> recipes = new List<CraftingRecipe>(); // Danh sách công thức
         public AudioSource audioSource; // Nguồn âm thanh để phát âm thanh
+
+        public Text text;
+        public ItemDatabase itemDatabase;
         private Button button;
 
         private void Awake()
@@ -30,14 +34,29 @@ namespace InventoryPlus
             }
             button.onClick.AddListener(TryCraft);
 
+            recipes.Add(CreateRecipe("Wooden Sword", itemDatabase.GetItemByID("0")));
+            recipes.Add(CreateRecipe("Stone Sword", itemDatabase.GetItemByID("1")));
+            //Debug.LogError($"Total recipes loaded: {recipes.Count}");
             SubscribeToSlotEvents();
 
             UpdateButtonState(); // Khởi tạo trạng thái nút
         }
 
+        private CraftingRecipe CreateRecipe(string recipeName, Item result)
+        {
+            // Tạo một công thức mới
+            CraftingRecipe newRecipe = new CraftingRecipe();
+            newRecipe.recipeName = recipeName;
+            newRecipe.result = result;
+            Debug.Log($"Created recipe for {recipeName} producing {result.itemName}");
+            newRecipe.categoryRequirements = new List<CategoryRequirement>();
+            newRecipe.categoryRequirements.Add(new CategoryRequirement { itemCategory = "plant", minCount = 1 });
+            return newRecipe;
+        }
+
         private void OnEnable()
         {
-            SubscribeToSlotEvents(); 
+            SubscribeToSlotEvents();
             UpdateButtonState(); // Cập nhật khi nút được kích hoạt
         }
 
@@ -110,6 +129,7 @@ namespace InventoryPlus
                                 audioSource.Play();
                             }
                             Debug.Log($"Crafting Success! Created: {result.name}");
+                            text.text = $"Vous avez créé {result.itemName}!";
 
                             // Sử dụng items từ input slots
                             foreach (var slot in inputSlots)
@@ -219,7 +239,10 @@ namespace InventoryPlus
             //         canCraft = false;
             //     }
             //}
-
+            if(inventory.GetInventorySlot(outputSlot) == null)
+            {
+                text.text = allSlotsFilled ? "appuyons sur la flèche" : "Vous avez besoin de quatre articles pour créer";
+            }
             button.interactable = canCraft;
             if (!canCraft)
             {
