@@ -10,25 +10,25 @@ namespace InventoryPlus
     // Enum for currency type
     public enum CurrencyType
     {
-        Gems,
-        Coins
+        Gemmes,
+        Pieces
     }
 
     // Manage gems and shop
     public class ShopManager : MonoBehaviour
     {
-        [Header("Shop Settings")]
+        [Header("Paramètres Boutique")]
         public List<Item> allAvailableItems = new List<Item>(); // Pool of all possible items
         public List<Item> shopItems = new List<Item>(); // Currently displayed items
         public Transform shopItemContainer;
         public GameObject shopItemPrefab;
 
-        [Header("Daily Shop Settings")]
+        [Header("Paramètres Boutique Quotidienne")]
         public int dailyItemCount = 6; // Number of items to spawn daily
         public bool enableDailyRefresh = true;
         public int refreshHour = 0; // Hour to refresh (0 = midnight)
         
-        [Header("Purchase Dialog")]
+        [Header("Dialogue d'Achat")]
         public GameObject purchaseDialog;
         public TextMeshProUGUI itemNameText;
         public Image itemIconImage;
@@ -43,11 +43,11 @@ namespace InventoryPlus
         public Button buyWithCoinsButton;
         public Button cancelButton;
 
-        [Header("Quantity Settings")]
+        [Header("Paramètres Quantité")]
         public int minQuantity = 1;
         public int maxQuantity = 100;
 
-        [Header("Shop UI")]
+        [Header("Interface Boutique")]
         public TextMeshProUGUI nextRefreshText; // Optional: Display next refresh time
 
         private Item currentItem;
@@ -86,7 +86,7 @@ namespace InventoryPlus
 
         void LoadLastRefreshDate()
         {
-            string lastRefreshString = PlayerPrefs.GetString("ShopLastRefresh", "");
+            string lastRefreshString = PlayerPrefs.GetString("BoutiqueDernierRafraichissement", "");
             
             if (string.IsNullOrEmpty(lastRefreshString))
             {
@@ -108,7 +108,7 @@ namespace InventoryPlus
 
         void SaveLastRefreshDate()
         {
-            PlayerPrefs.SetString("ShopLastRefresh", DateTime.Now.ToString());
+            PlayerPrefs.SetString("BoutiqueDernierRafraichissement", DateTime.Now.ToString());
             PlayerPrefs.Save();
         }
 
@@ -135,7 +135,7 @@ namespace InventoryPlus
 
         void RefreshDailyItems()
         {
-            Debug.Log("🔄 Refreshing daily shop items!");
+            Debug.Log("🔄 Rafraîchissement des articles quotidiens de la boutique !");
             
             // Clear current shop items
             shopItems.Clear();
@@ -191,7 +191,7 @@ namespace InventoryPlus
             // Add listeners
             minusButton.onClick.AddListener(() => ChangeQuantity(-1));
             plusButton.onClick.AddListener(() => ChangeQuantity(1));
-            buyWithCoinsButton.onClick.AddListener(() => ConfirmPurchase(CurrencyType.Coins));
+            buyWithCoinsButton.onClick.AddListener(() => ConfirmPurchase(CurrencyType.Pieces));
             cancelButton.onClick.AddListener(ClosePurchaseDialog);
 
             quantitySlider.onValueChanged.AddListener(OnQuantitySliderChanged);
@@ -210,13 +210,13 @@ namespace InventoryPlus
                 }
                 
                 TimeSpan timeUntilRefresh = nextRefresh - now;
-                nextRefreshText.text = $"Next Refresh: {timeUntilRefresh.Hours:00}:{timeUntilRefresh.Minutes:00}:{timeUntilRefresh.Seconds:00}";
+                nextRefreshText.text = $"Prochain Rafraîchissement: {timeUntilRefresh.Hours:00}:{timeUntilRefresh.Minutes:00}:{timeUntilRefresh.Seconds:00}";
             }
         }
 
         public void OpenPurchaseDialog(Item item)
         {
-//            Debug.Log($"Opening purchase dialog for {item.itemName}");
+//            Debug.Log($"Ouverture du dialogue d'achat pour {item.itemName}");
             currentItem = item;
             currentQuantity = minQuantity;
 
@@ -224,7 +224,7 @@ namespace InventoryPlus
 //            Debug.Log($"{purchaseDialog.activeSelf} - {item.itemName}");
             itemNameText.text = item.itemName;
             itemIconImage.sprite = item.itemSprite;
-            coinsPriceText.text = $"{item.sellingPrice} coins/item";
+            coinsPriceText.text = $"{item.sellingPrice} pièces/article";
 
             // Reset slider
             quantitySlider.value = minQuantity;
@@ -250,10 +250,10 @@ namespace InventoryPlus
         void UpdatePurchaseDialog()
         {
             // Update quantity display text
-            quantityDisplayText.text = $"Quantity: {currentQuantity}";
+            quantityDisplayText.text = $"Quantité: {currentQuantity}";
 
             int totalCoinsPrice = currentItem.sellingPrice * currentQuantity;
-            totalCoinsText.text = $"Total: {totalCoinsPrice} coins";
+            totalCoinsText.text = $"Total: {totalCoinsPrice} pièces";
 
             // Check if player has enough money
             buyWithCoinsButton.interactable = gameManager.currencyManager.coins >= totalCoinsPrice;
@@ -277,18 +277,18 @@ namespace InventoryPlus
         void ConfirmPurchase(CurrencyType currencyType)
         {
             int totalPrice = currentItem.sellingPrice * currentQuantity;
-            string currencyName = "coins";
+            string currencyName = "pièces";
 
             if (gameManager.currencyManager.coins >= totalPrice)
             {
                 gameManager.currencyManager.AddCoins(-totalPrice);
                 inventory.AddInventory(currentItem, currentQuantity, 0, false);
-                Debug.Log($"✅ Purchased {currentQuantity}x {currentItem.itemName} for {totalPrice}");
+                Debug.Log($"✅ Acheté {currentQuantity}x {currentItem.itemName} pour {totalPrice}");
                 ClosePurchaseDialog();
             }
             else
             {
-                Debug.Log($"❌ Not enough {currencyName}...");
+                Debug.Log($"❌ Pas assez de {currencyName}...");
             }
         }
 
@@ -299,7 +299,7 @@ namespace InventoryPlus
         }
 
         // Manual refresh for testing
-        [ContextMenu("Force Refresh Shop")]
+        [ContextMenu("Forcer Rafraîchissement Boutique")]
         public void ForceRefreshShop()
         {
             RefreshDailyItems();
@@ -308,25 +308,25 @@ namespace InventoryPlus
         }
 
         // Cheat functions for testing
-        [ContextMenu("Add 500 Gems")]
+        [ContextMenu("Ajouter 500 Gemmes")]
         public void AddGems()
         {
             gameManager.currencyManager.AddGems(500);
         }
 
-        [ContextMenu("Add 300 Coins")]
+        [ContextMenu("Ajouter 300 Pièces")]
         public void AddCoins()
         {
             gameManager.currencyManager.AddCoins(300);
         }
 
         // Debug function to check refresh status
-        [ContextMenu("Check Refresh Status")]
+        [ContextMenu("Vérifier État Rafraîchissement")]
         public void CheckRefreshStatus()
         {
-            Debug.Log($"Last Refresh: {lastRefreshDate}");
-            Debug.Log($"Current Time: {DateTime.Now}");
-            Debug.Log($"Current Shop Items: {shopItems.Count}");
+            Debug.Log($"Dernier Rafraîchissement: {lastRefreshDate}");
+            Debug.Log($"Heure Actuelle: {DateTime.Now}");
+            Debug.Log($"Articles Boutique Actuels: {shopItems.Count}");
         }
     }
 }

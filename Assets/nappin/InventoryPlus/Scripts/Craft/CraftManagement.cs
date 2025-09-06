@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
 using System.Linq;
 
@@ -111,12 +110,12 @@ namespace InventoryPlus
         {
             return tier switch
             {
-                CraftingTier.Common => 10f,      // Weight thấp nhất
-                CraftingTier.Uncommon => 20f,    
-                CraftingTier.Rare => 35f,        
-                CraftingTier.Epic => 55f,        
-                CraftingTier.Legendary => 80f,   
-                CraftingTier.Mythic => 100f,     // Weight cao nhất
+                CraftingTier.Common    => 100f,  // dễ ra nhất
+                CraftingTier.Uncommon  => 80f,
+                CraftingTier.Rare      => 55f,
+                CraftingTier.Epic      => 35f,
+                CraftingTier.Legendary => 20f,
+                CraftingTier.Mythic    => 10f,   // khó ra nhất
                 _ => 10f
             };
         }
@@ -198,6 +197,11 @@ namespace InventoryPlus
     {
         public string itemCategory;
         public int minCount;
+        public CategoryRequirement(string category, int count)
+        {
+            itemCategory = category;
+            minCount = count;
+        }
     }
 
     [CreateAssetMenu(menuName = "InventoryPlus/CraftingRecipe")]
@@ -224,7 +228,7 @@ namespace InventoryPlus
         {
             return tier switch
             {
-                CraftingTier.Common => 10f,
+                CraftingTier.Common => 1000f,
                 CraftingTier.Uncommon => 20f,
                 CraftingTier.Rare => 35f,
                 CraftingTier.Epic => 55f,
@@ -247,7 +251,8 @@ namespace InventoryPlus
             {
                 totalWeight += recipe.GetWeight();
             }
-
+            Debug.Log($"Total Weight: {totalWeight}");
+            Debug.Log($"This Recipe Weight: {GetWeight()}");
             return (GetWeight() / totalWeight) * 100f;
         }
         
@@ -266,5 +271,78 @@ namespace InventoryPlus
         {
             return CraftingUtils.GetTierDisplayName(tier);
         }
+
+        // Thêm code này vào cuối class
+        #if UNITY_EDITOR
+        [ContextMenu("Refresh Asset")]
+        public void RefreshAsset()
+        {
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+        }
+
+        [ContextMenu("Validate Recipe")]
+        public void ValidateRecipe()
+        {
+            List<string> issues = new List<string>();
+
+            if (string.IsNullOrEmpty(recipeName))
+                issues.Add("• Recipe name is empty");
+
+            if (result == null)
+                issues.Add("• Result item is not assigned");
+
+            if (categoryRequirements == null || categoryRequirements.Count == 0)
+                issues.Add("• No category requirements defined");
+            else
+            {
+                foreach (var req in categoryRequirements)
+                {
+                    if (string.IsNullOrEmpty(req.itemCategory))
+                        issues.Add("• Empty item category found");
+                    if (req.minCount <= 0)
+                        issues.Add($"• Invalid min count for {req.itemCategory}");
+                }
+            }
+
+            if (issues.Count == 0)
+            {
+                Debug.Log($"✓ Recipe '{recipeName}' is valid!");
+            }
+            else
+            {
+                Debug.LogWarning($"❌ Recipe '{recipeName}' has issues:\n" + string.Join("\n", issues));
+            }
+        }
+
+        [ContextMenu("Generate Description")]
+        public void GenerateDescription()
+        {
+            if (result != null)
+            {
+                description = $"Recipe to craft {result.name}. " +
+                             $"Tier: {GetTierDisplayName()}. ";
+                
+                if (categoryRequirements != null && categoryRequirements.Count > 0)
+                {
+                    description += "Requirements: ";
+                    for (int i = 0; i < categoryRequirements.Count; i++)
+                    {
+                        var req = categoryRequirements[i];
+                        description += $"{req.minCount}x {req.itemCategory}";
+                        if (i < categoryRequirements.Count - 1) description += ", ";
+                    }
+                }
+                
+                UnityEditor.EditorUtility.SetDirty(this);
+                Debug.Log($"Generated description for '{recipeName}'");
+            }
+            else
+            {
+                Debug.LogWarning("Cannot generate description: Result item not assigned");
+            }
+        }
+        #endif
     }
 }

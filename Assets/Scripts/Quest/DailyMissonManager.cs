@@ -6,7 +6,7 @@ using TMPro;
 [Serializable]
 public class DailyMissionManager : MonoBehaviour
 {
-    [Header("Daily Mission UI")]
+    [Header("Interface Missions Quotidiennes")]
     public GameObject dailyMissionPanel;
     public Transform dailyMissionParent;
     public GameObject dailyMissionItemPrefab;
@@ -30,33 +30,55 @@ public class DailyMissionManager : MonoBehaviour
         {
             missionSpawner = gameObject.AddComponent<DailyMissionSpawner>();
         }
+        Debug.Log("Mission Spawner initialisé: " + (missionSpawner != null));
     }
 
     // Updated CreateDailyMissions method
     private void CreateDailyMissionsWithSpawner()
     {
         if (missionSpawner == null)
+        {
+            Debug.LogError("Mission Spawner est null! Initialisation...");
             InitializeSpawner();
+        }
+
+        if (missionSpawner == null)
+        {
+            Debug.LogError("Impossible d'initialiser Mission Spawner! Utilisation des missions par défaut.");
+            CreateDailyMissions();
+            return;
+        }
 
         dailyMissions.Clear();
         dailyMissions = missionSpawner.SpawnDailyMissions();
-        Debug.Log($"Spawned {dailyMissions.Count} daily missions using spawner.");
+        Debug.Log($"Généré {dailyMissions.Count} missions quotidiennes avec le spawner.");
     }
 
     // Method to spawn special event missions
     public void StartSpecialEvent(string eventName)
     {
+        if (missionSpawner == null)
+        {
+            Debug.LogError("Mission Spawner non disponible pour l'événement!");
+            return;
+        }
+        
         List<Quest> eventMissions = missionSpawner.SpawnEventMissions(eventName);
         dailyMissions.AddRange(eventMissions);
         RefreshDailyMissionUI();
     }
+    
     private void Start()
     {
         questManager = FindFirstObjectByType<QuestManager>();
-        InitializeDailyMissions();
-        SetupUI();
-        CalculateNextResetTime();
+        
+        // Initialiser le spawner EN PREMIER
         InitializeSpawner();
+        
+        // Ensuite initialiser les missions
+        CalculateNextResetTime();
+        SetupUI();
+        InitializeDailyMissions();
     }
 
     private void Update()
@@ -73,23 +95,33 @@ public class DailyMissionManager : MonoBehaviour
 
     private void InitializeDailyMissions()
     {
-        CreateDailyMissionsWithSpawner();
+        // Essayer de charger les données sauvegardées d'abord
+        LoadDailyProgress();
+        
+        // Si pas de données sauvegardées ou missions expirées, créer nouvelles missions
+        if (dailyMissions.Count == 0 || DateTime.Now >= nextResetTime)
+        {
+            CreateDailyMissionsWithSpawner();
+            SaveDailyProgress();
+        }
+        
         RefreshDailyMissionUI();
     }
 
     private void CreateDailyMissions()
     {
+        Debug.Log("Création des missions par défaut (fallback)");
         dailyMissions.Clear();
 
         // Daily Mission 1: Kill enemies
         Quest dailyKill = new Quest
         {
-            id = "daily_kill_enemies",
-            title = "Daily Slayer",
-            description = "Defeat 50 enemies today",
+            id = "quotidien_tuer_ennemis",
+            title = "Tueur Quotidien",
+            description = "Vaincre 50 ennemis aujourd'hui",
             type = QuestType.KillMonsters,
             status = QuestStatus.InProgress,
-            currentProgress = 50,
+            currentProgress = 0,
             requiredProgress = 50,
             reward = new QuestReward { coins = 500},
             isDaily = true,
@@ -99,26 +131,12 @@ public class DailyMissionManager : MonoBehaviour
         // Daily Mission 2: Collect gold
         Quest dailyGold = new Quest
         {
-            id = "daily_collect_gold",
-            title = "Gold Collector",
-            description = "Collect 1000 gold coins",
+            id = "quotidien_collecter_or",
+            title = "Collectionneur d'Or",
+            description = "Collecter 1000 pièces d'or",
             type = QuestType.CollectItems,
             status = QuestStatus.InProgress,
-            currentProgress = 350,
-            requiredProgress = 1000,
-            reward = new QuestReward { coins = 300},
-            isDaily = true,
-            expiryTime = nextResetTime
-        };
-
-        Quest dailyG = new Quest
-        {
-            id = "daily_collect_gold",
-            title = "Gold Collector",
-            description = "Collect 1000 gold coins",
-            type = QuestType.CollectItems,
-            status = QuestStatus.InProgress,
-            currentProgress = 350,
+            currentProgress = 0,
             requiredProgress = 1000,
             reward = new QuestReward { coins = 300},
             isDaily = true,
@@ -128,40 +146,63 @@ public class DailyMissionManager : MonoBehaviour
         // Daily Mission 3: Complete stages
         Quest dailyStages = new Quest
         {
-            id = "daily_complete_stages",
-            title = "Stage Master",
-            description = "Complete 3 different stages",
+            id = "quotidien_terminer_niveaux",
+            title = "Maître des Niveaux",
+            description = "Terminer 3 niveaux différents",
             type = QuestType.Build,
             status = QuestStatus.InProgress,
-            currentProgress = 1,
+            currentProgress = 0,
             requiredProgress = 3,
             reward = new QuestReward { coins = 800 },
             isDaily = true,
             expiryTime = nextResetTime
         };
 
-        dailyMissions.AddRange(new[] { dailyKill, dailyGold, dailyG, dailyStages });
+        dailyMissions.AddRange(new[] { dailyKill, dailyGold, dailyStages });
+        Debug.Log($"Créé {dailyMissions.Count} missions par défaut");
     }
 
     private void RefreshDailyMissionUI()
     {
+        CreateDailyMissions();
+        Debug.Log($"Rafraîchissement de l'interface avec {dailyMissions.Count} missions");
+        
         // Clear existing UI items
         foreach (Transform child in dailyMissionParent)
         {
             Destroy(child.gameObject);
         }
 
+        // Vérifier si nous avons des missions à afficher
+        if (dailyMissions.Count == 0)
+        {
+            Debug.LogWarning("Aucune mission quotidienne à afficher!");
+            return;
+        }
+
         // Create new UI items for each daily mission
         foreach (Quest mission in dailyMissions)
         {
+            if (dailyMissionItemPrefab == null)
+            {
+                Debug.LogError("dailyMissionItemPrefab est null!");
+                continue;
+            }
+
             GameObject missionItem = Instantiate(dailyMissionItemPrefab, dailyMissionParent);
             DailyMissionUIItem uiItem = missionItem.GetComponent<DailyMissionUIItem>();
 
             if (uiItem != null)
+            {
                 uiItem.SetupMission(mission, this);
-            uiItem.UpdateTaskTypeVisuals();
+                uiItem.UpdateTaskTypeVisuals();
+            }
+            else
+            {
+                Debug.LogError("DailyMissionUIItem component non trouvé sur le prefab!");
+            }
         }
-        // Create reward tiers
+        
         UpdateOverallProgress();
     }
 
@@ -178,37 +219,20 @@ public class DailyMissionManager : MonoBehaviour
 
         if (overallProgressSlider != null)
         {
-            overallProgressSlider.value = (float)completedMissions / totalMissions;
+            overallProgressSlider.value = totalMissions > 0 ? (float)completedMissions / totalMissions : 0f;
         }
 
         if (overallProgressText != null)
         {
-            overallProgressText.text = $"{completedMissions}/{totalMissions} Completed";
+            overallProgressText.text = $"{completedMissions}/{totalMissions} Terminées";
         }
-
-        // UpdateRewardTiers(completedMissions, totalMissions);
     }
-
-    // private void UpdateRewardTiers(int completed, int total)
-    // {
-    //     // Cập nhật reward tiers dựa trên số mission hoàn thành
-    //     for (int i = 0; i < rewardTierButtons.Length; i++)
-    //     {
-    //         int requiredForTier = (i + 1) * (total / rewardTierButtons.Length);
-    //         bool tierUnlocked = completed >= requiredForTier;
-            
-    //         if (rewardTierButtons[i] != null)
-    //             rewardTierButtons[i].interactable = tierUnlocked;
-            
-    //         if (rewardProgressImages[i] != null)
-    //             rewardProgressImages[i].fillAmount = tierUnlocked ? 1f : (float)completed / requiredForTier;
-    //     }
-    // }
 
     private void CalculateNextResetTime()
     {
         DateTime now = DateTime.Now;
         nextResetTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddDays(1);
+        Debug.Log($"Prochaine réinitialisation: {nextResetTime}");
     }
 
     private void UpdateTimeRemaining()
@@ -218,11 +242,11 @@ public class DailyMissionManager : MonoBehaviour
             TimeSpan timeLeft = nextResetTime - DateTime.Now;
             if (timeLeft.TotalSeconds > 0)
             {
-                timeRemainingText.text = $"Resets in: {timeLeft.Hours:D2}:{timeLeft.Minutes:D2}:{timeLeft.Seconds:D2}";
+                timeRemainingText.text = $"Réinitialise dans: {timeLeft.Hours:D2}:{timeLeft.Minutes:D2}:{timeLeft.Seconds:D2}";
             }
             else
             {
-                timeRemainingText.text = "Resetting...";
+                timeRemainingText.text = "Réinitialisation...";
             }
         }
     }
@@ -237,23 +261,24 @@ public class DailyMissionManager : MonoBehaviour
 
     private void ResetDailyMissions()
     {
-        // Reset all daily missions
-        foreach (Quest mission in dailyMissions)
-        {
-            mission.currentProgress = 0;
-            mission.status = QuestStatus.InProgress;
-        }
-
+        Debug.Log("Réinitialisation des missions quotidiennes!");
+        
+        // Créer de nouvelles missions
+        CreateDailyMissionsWithSpawner();
+        
         CalculateNextResetTime();
+        SaveDailyProgress();
         RefreshDailyMissionUI();
         
-        Debug.Log("Daily missions have been reset!");
+        Debug.Log("Les missions quotidiennes ont été réinitialisées!");
     }
 
     public void RefreshDailyMissions()
     {
         // Allow manual refresh (could cost gems)
-        CreateDailyMissions();
+        Debug.Log("Rafraîchissement manuel des missions");
+        CreateDailyMissionsWithSpawner();
+        SaveDailyProgress();
         RefreshDailyMissionUI();
     }
 
@@ -273,6 +298,7 @@ public class DailyMissionManager : MonoBehaviour
             }
         }
         
+        SaveDailyProgress();
         RefreshDailyMissionUI();
     }
 
@@ -285,13 +311,14 @@ public class DailyMissionManager : MonoBehaviour
                 questManager.ClaimQuestReward(mission);
             
             mission.status = QuestStatus.Claimed;
+            SaveDailyProgress();
             RefreshDailyMissionUI();
         }
     }
 
     private void ShowMissionCompletedEffect(Quest mission)
     {
-        Debug.Log($"Daily Mission Completed: {mission.title}");
+        Debug.Log($"Mission Quotidienne Terminée: {mission.title}");
         // Implement completion effect
     }
 
@@ -309,25 +336,63 @@ public class DailyMissionManager : MonoBehaviour
     // Save/Load daily mission progress
     public void SaveDailyProgress()
     {
-        string saveData = JsonUtility.ToJson(new DailyMissionSaveData
+        try
         {
-            missions = dailyMissions,
-            nextResetTime = nextResetTime.ToBinary()
-        });
-        
-        PlayerPrefs.SetString("DailyMissions", saveData);
+            string saveData = JsonUtility.ToJson(new DailyMissionSaveData
+            {
+                missions = dailyMissions,
+                nextResetTime = nextResetTime.ToBinary()
+            });
+            
+            PlayerPrefs.SetString("MissionsQuotidiennes", saveData);
+            PlayerPrefs.Save();
+            Debug.Log("Progrès des missions sauvegardé");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Erreur lors de la sauvegarde: {e.Message}");
+        }
     }
 
     public void LoadDailyProgress()
     {
-        if (PlayerPrefs.HasKey("DailyMissions"))
+        try
         {
-            string saveData = PlayerPrefs.GetString("DailyMissions");
-            DailyMissionSaveData data = JsonUtility.FromJson<DailyMissionSaveData>(saveData);
-            
-            dailyMissions = data.missions;
-            nextResetTime = DateTime.FromBinary(data.nextResetTime);
+            if (PlayerPrefs.HasKey("MissionsQuotidiennes"))
+            {
+                string saveData = PlayerPrefs.GetString("MissionsQuotidiennes");
+                DailyMissionSaveData data = JsonUtility.FromJson<DailyMissionSaveData>(saveData);
+                
+                if (data != null && data.missions != null)
+                {
+                    dailyMissions = data.missions;
+                    nextResetTime = DateTime.FromBinary(data.nextResetTime);
+                    Debug.Log($"Progrès chargé: {dailyMissions.Count} missions");
+                }
+            }
         }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Erreur lors du chargement: {e.Message}");
+            dailyMissions.Clear();
+        }
+    }
+    
+    // Method for debugging
+    [ContextMenu("Forcer Création Missions")]
+    public void ForceCreateMissions()
+    {
+        CreateDailyMissionsWithSpawner();
+        RefreshDailyMissionUI();
+    }
+    
+    [ContextMenu("Afficher Info Debug")]
+    public void ShowDebugInfo()
+    {
+        Debug.Log($"Spawner: {(missionSpawner != null ? "OK" : "NULL")}");
+        Debug.Log($"Missions: {dailyMissions.Count}");
+        Debug.Log($"Panel Parent: {(dailyMissionParent != null ? "OK" : "NULL")}");
+        Debug.Log($"Prefab: {(dailyMissionItemPrefab != null ? "OK" : "NULL")}");
     }
 }
 

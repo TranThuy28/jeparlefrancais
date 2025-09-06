@@ -76,7 +76,7 @@ public class WhackAMoleGame : MonoBehaviour
         {
             GameObject holeObj = Instantiate(holePrefab, gameArea);
 
-            holeObj.transform.localPosition = new Vector2(positions[i].x * 400, positions[i].y * 300 - 100);
+            holeObj.transform.localPosition = new Vector2(positions[i].x * 200, positions[i].y * 200 - 100);
 
             MoleHole hole = holeObj.GetComponent<MoleHole>();
             if (hole == null)

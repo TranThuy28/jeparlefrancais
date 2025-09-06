@@ -15,20 +15,21 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 82407ffd596b32b4bb7dc4b99c7c542a, type: 3}
   itemPrefab: {fileID: 1039872785135470, guid: 6dd867f5eb239ad45989b6a22d014e6b, type: 3}
   itemChapter: 0
-  itemName: Coach
-  itemID: 
+  itemName: Manteau
+  itemID: 0
   itemCategory: 
-  isStackable: 0
+  isStackable: 1
   stackSize: 9999
   isDurable: 1
   maxDurability: 100
-  sellingPrice: 100
+  sellingPrice: 10000
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: material
-  itemDescription: 
-  itemRarity: 0
+  itemAttribute: Produit
+  itemDescription: "Un manteau chaud et confortable, parfait pour se prot\xE9ger
+    du froid. Peut \xEAtre port\xE9 au quotidien ou lors d\u2019aventures en ext\xE9rieur."
+  itemRarity: 2
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}
   equipAudio: {fileID: 0}

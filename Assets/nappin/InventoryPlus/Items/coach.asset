@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: coach
   m_EditorClassIdentifier: Assembly-CSharp:InventoryPlus:CraftingRecipe
-  recipeName: 
+  recipeName: abc
   result: {fileID: 11400000, guid: 813e11068677aec419c0e200c8c72663, type: 2}
   tier: 6
   categoryRequirements:

@@ -15,18 +15,21 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: e13b302032b6ad746a1933b82885acfb, type: 3}
   itemPrefab: {fileID: 198640, guid: fb06958f2215c4f43964cc3b9d383d15, type: 3}
   itemChapter: 0
-  itemName: yellow mushrooms
+  itemName: Champignon jaune
   itemID: 
   itemCategory: mushroom
   isStackable: 1
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
+  sellingPrice: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: material
-  itemDescription: 
+  itemAttribute: "mat\xE9riau"
+  itemDescription: "Un champignon jaune savoureux, trouv\xE9 dans les prairies et
+    les for\xEAts. Peut \xEAtre utilis\xE9 en cuisine ou pour pr\xE9parer des potions
+    simples."
   itemRarity: 0
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}
