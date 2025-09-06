@@ -135,9 +135,9 @@ public class DialogueManager : MonoBehaviour
         // Chuyển độ ưu tiên camera với hiệu ứng mượt
         float elapsedTime = 0f;
         int startPriority = dialogueCamera.Priority;
-        int targetPriority = 20;
+        int targetPriority = 200;
         
-        playerCamera.Priority = 10;
+        playerCamera.Priority = 50;
         
         while (elapsedTime < cameraTransitionDuration)
         {
@@ -174,9 +174,9 @@ public class DialogueManager : MonoBehaviour
         // Chuyển độ ưu tiên camera với hiệu ứng mượt
         float elapsedTime = 0f;
         int startPriority = playerCamera.Priority;
-        int targetPriority = 20;
+        int targetPriority = 200;
         
-        dialogueCamera.Priority = 10;
+        dialogueCamera.Priority = 50;
         
         while (elapsedTime < cameraTransitionDuration)
         {
@@ -247,13 +247,13 @@ public class DialogueManager : MonoBehaviour
     // Phương thức legacy để tương thích ngược (nếu cần)
     void SwitchToDialogueCamera()
     {
-        dialogueCamera.Priority = 20;
-        playerCamera.Priority = 10;
+        dialogueCamera.Priority = 200;
+        playerCamera.Priority = 50;
     }
     
     void SwitchToPlayerCamera()
     {
-        dialogueCamera.Priority = 10;
-        playerCamera.Priority = 20;
+        dialogueCamera.Priority = 50;
+        playerCamera.Priority = 100;
     }
 }

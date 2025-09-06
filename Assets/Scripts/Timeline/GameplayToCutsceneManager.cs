@@ -20,6 +20,11 @@ public class GameplayToCutsceneManager : MonoBehaviour
     public CharacterController characterController; // Character Controller
     public MonoBehaviour[] gameplayScripts; // Các script gameplay cần tắt
 
+    [Header("Position Management")]
+    [Tooltip("Vị trí cố định mà nhân vật sẽ đứng sau cutscene")]
+    public Transform gameplayStartPosition; // Vị trí bắt đầu gameplay
+    [Tooltip("Có sử dụng vị trí cố định hay không")]
+    public bool useFixedGameplayPosition = true;
     [Header("Character Position Fix")]
     [Tooltip("Freeze character position during cutscene to prevent falling")]
     public bool freezeCharacterDuringCutscene = true;
@@ -61,6 +66,8 @@ public class GameplayToCutsceneManager : MonoBehaviour
             characterOriginalRotation = playerCharacter.transform.rotation;
         }
     }
+
+    
     
     void Update()
     {
