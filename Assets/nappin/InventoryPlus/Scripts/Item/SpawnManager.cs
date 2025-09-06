@@ -14,7 +14,7 @@ namespace InventoryPlus
         [SerializeField] private List<SpawnLocation> spawnLocations = new List<SpawnLocation>();
 
         [Header("Spawn Settings")]
-        [SerializeField] public int maxActiveItems = 50;
+        [SerializeField] public int maxActiveItems = 3;
         [SerializeField] private float autoSpawnInterval = 5f;
         [SerializeField] private bool enableAutoSpawn = true;
 
@@ -199,6 +199,8 @@ namespace InventoryPlus
 
             spawnedObject.transform.position = spawnPosition;
             spawnedObject.transform.rotation = Quaternion.identity;
+
+            spawnedObject.AddComponent<ItemCollectable>();
 
             // Thêm vào tracker
             SpawnedItemTracker tracker = new SpawnedItemTracker(spawnedObject, item, spawnLocation);
