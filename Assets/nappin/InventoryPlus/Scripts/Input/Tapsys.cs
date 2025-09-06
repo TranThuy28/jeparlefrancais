@@ -85,30 +85,17 @@ namespace InventoryPlus
             }
         }
 
-        private void ShowCursor(bool _show)
-        {
-                if (_show)
-                {
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
-                }
-                else
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                }
-        }
         public void SelectTab(int tabIndex)
         {
 
-
+            
             // Kiểm tra nếu tab system bị tắt
             if (!isTabSystemActive)
             {
                 Debug.Log("Tab system is inactive");
                 return;
             }
-
+                
             // Kiểm tra index hợp lệ
             if (tabIndex < 0 || tabIndex >= tabs.Count)
             {
@@ -116,7 +103,7 @@ namespace InventoryPlus
                 return;
             }
 
-
+            
             // Nếu tab hiện tại đã được chọn và không cho phép toggle off thì không làm gì
             if (currentSelectedTab == tabIndex)
             {
@@ -218,10 +205,8 @@ namespace InventoryPlus
         // Toggle toàn bộ tab system on/off
         public void ToggleTabSystem()
         {
-            
             isTabSystemActive = !isTabSystemActive;
-            ShowCursor(isTabSystemActive);
-
+            
             if (isTabSystemActive)
             {
                 // Bật tab system - hiện tất cả UI elements
@@ -236,7 +221,7 @@ namespace InventoryPlus
                         }
                     }
                 }
-
+                
                 // Khôi phục tab đã chọn hoặc chọn tab mặc định
                 if (currentSelectedTab >= 0 && currentSelectedTab < tabs.Count)
                 {
@@ -247,7 +232,7 @@ namespace InventoryPlus
                     Debug.Log("No tab selected, selecting default tab: " + defaultTab);
                     SelectTab(defaultTab);
                 }
-
+                
                 Debug.Log("Tab system enabled");
             }
             else
@@ -260,7 +245,7 @@ namespace InventoryPlus
                         element.SetActive(false);
                     }
                 }
-                //                Debug.Log("Tab system disabled");
+//                Debug.Log("Tab system disabled");
             }
         }
 

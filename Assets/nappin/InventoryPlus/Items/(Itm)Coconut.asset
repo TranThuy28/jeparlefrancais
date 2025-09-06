@@ -15,21 +15,18 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 8d61815265d859745b297f2212097ff6, type: 3}
   itemPrefab: {fileID: 1000010287807542, guid: ad4b0f26f47a72b40b0e9144a42fdfb1, type: 3}
   itemChapter: 0
-  itemName: Noix de coco
+  itemName: Coconut
   itemID: 
   itemCategory: Fruit
   isStackable: 1
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
-  sellingPrice: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
-  itemDescription: "Une noix de coco tropicale, riche en eau et en chair comestible.
-    Peut \xEAtre consomm\xE9e telle quelle ou utilis\xE9e comme ingr\xE9dient dans
-    des recettes et potions."
+  itemAttribute: material
+  itemDescription: 
   itemRarity: 1
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}

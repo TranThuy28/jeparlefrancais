@@ -11,8 +11,11 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 *.log
+<<<<<<< HEAD
 build/
 build1/
+=======
+>>>>>>> c1794ac255a190fa6f505149cb33c5e640d583b1
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

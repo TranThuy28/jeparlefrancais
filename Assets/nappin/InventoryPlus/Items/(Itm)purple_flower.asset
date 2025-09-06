@@ -15,20 +15,18 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 9e0ddce9473540246930e5380e05d211, type: 3}
   itemPrefab: {fileID: 1650153803941426, guid: 8c4918f931d2e9840a28bb42dc255de7, type: 3}
   itemChapter: 1
-  itemName: Fleur violette
+  itemName: purple flower
   itemID: 
   itemCategory: plant
   isStackable: 1
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
-  sellingPrice: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
-  itemDescription: "Une fleur violette d\xE9licate, symbole de beaut\xE9 et de myst\xE8re.
-    Peut servir de d\xE9coration ou comme ingr\xE9dient pour des potions."
+  itemAttribute: material
+  itemDescription: 
   itemRarity: 1
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}
