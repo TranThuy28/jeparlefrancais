@@ -15,18 +15,21 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 35bc20714ac9ba54e9de85a8affaa269, type: 3}
   itemPrefab: {fileID: 1137386124236914, guid: 56efd4d892173624daa8715a29e463b8, type: 3}
   itemChapter: 0
-  itemName: pink flower
+  itemName: Fleur rose
   itemID: 1
   itemCategory: plant
   isStackable: 1
   stackSize: 99
   isDurable: 0
   maxDurability: 0
+  sellingPrice: 100
   usageCost: 0
   hasDamagedSprites: 0
   damagedSprites: []
   itemAttribute: material
-  itemDescription: a cute flower
+  itemDescription: "Une jolie fleur rose qui apporte couleur et beaut\xE9 au jardin.
+    Peut \xEAtre utilis\xE9e comme d\xE9coration ou ingr\xE9dient pour des potions
+    florales."
   itemRarity: 2
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}

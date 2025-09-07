@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using InventoryPlus;
 using System;
 using UnityEditor;
-using UnityEditor.Rendering;
 
 namespace InventoryPlus
 {
@@ -19,13 +18,23 @@ namespace InventoryPlus
         public List<ItemSlot> inputItems = new List<ItemSlot>();
         public List<CraftingRecipe> recipes = new List<CraftingRecipe>(); // Danh sách công thức
         public AudioSource audioSource; // Nguồn âm thanh để phát âm thanh
-
+        TaskManager taskManager;
         public Text text;
         public ItemDatabase itemDatabase;
         private Button button;
 
         private void Awake()
         {
+                        TaskManager[] allTaskManagers = Resources.FindObjectsOfTypeAll<TaskManager>();
+            foreach (TaskManager tm in allTaskManagers)
+            {
+                if (tm.gameObject.name == "ScrollRect1234")
+                {
+                    taskManager = tm;
+                    break;
+                }
+            }
+
             button = GetComponent<Button>();
             if (button == null)
             {
@@ -129,7 +138,9 @@ namespace InventoryPlus
                                 audioSource.Play();
                             }
                             Debug.Log($"Crafting Success! Created: {result.name}");
+                            taskManager.CompleteTask(2); // Hoàn thành nhiệm vụ có ID 2
                             text.text = $"Vous avez créé {result.itemName}!";
+                            
 
                             // Sử dụng items từ input slots
                             foreach (var slot in inputSlots)

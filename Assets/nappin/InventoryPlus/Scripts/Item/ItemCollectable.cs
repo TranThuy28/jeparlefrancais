@@ -10,115 +10,166 @@ namespace InventoryPlus
         public Item itemData;
         public int amount = 1;
         
-        [Header("Auto-Generated UI Settings")]
-        public bool autoCreateUI = true;
-        public Vector3 uiOffset = new Vector3(0, 2f, 0);
+        [Header("UI Settings")]
+        public Font textFont; // Assign font trong Inspector (optional)
+        public int fontSize = 18;
         public Color textColor = Color.white;
-        public Color backgroundColor = new Color(0, 0, 0, 0.7f);
-        public int fontSize = 14;
-        
-        [Header("Manual UI References (Optional)")]
-        public Canvas collectUI;
-        public Text collectText;
+        public Color backgroundColor = new Color(0, 0, 0, 0.8f); // Màu nền semi-transparent
+        public Vector3 uiOffset = new Vector3(0, 2f, 0); // Offset từ item position
         
         [Header("Settings")]
-        public float detectionRadius = 10f;
+        public float detectionRadius = 3f;
         public KeyCode collectKey = KeyCode.C;
-        
+        TaskManager taskManager;
         private Transform player;
+        private Inventory playerInventory;
         private bool isPlayerNear = false;
         private bool isMouseOver = false;
-        private Camera mainCamera;
+        
+        // UI Components
+        private Canvas collectUI;
+        private Text collectText;
+        private Image backgroundImage;
+        private GameObject uiObject;
         
         // Events
         public static event Action<Item, int> OnItemCollected;
         
         void Start()
         {
-            // Tìm player và camera
+            // Tìm player
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
-            mainCamera = Camera.main;
+            TaskManager[] allTaskManagers = Resources.FindObjectsOfTypeAll<TaskManager>();
+            foreach (TaskManager tm in allTaskManagers)
+            {
+                if (tm.gameObject.name == "ScrollRect1234")
+                {
+                    taskManager = tm;
+                    break;
+                }
+            }
+
+            playerInventory = FindAnyObjectByType<Inventory>(FindObjectsInactive.Include);
             
             Debug.Log(player == null ? "Player not found. Please ensure the player has the 'Player' tag." : "Player found.");
             
-            // Tự động tạo UI nếu được bật và chưa có UI manual
-            if (autoCreateUI && (collectUI == null || collectText == null))
+            // Tạo UI động cho item này
+            CreateCollectUI();
+        }
+        
+        void CreateCollectUI()
+        {
+            // Tạo GameObject chính cho UI
+            uiObject = new GameObject($"CollectUI_{gameObject.name}");
+            uiObject.transform.position = transform.position + uiOffset;
+            uiObject.transform.SetParent(transform); // Make it child của item để follow item
+            
+            // Thêm Canvas (World Space)
+            collectUI = uiObject.AddComponent<Canvas>();
+            collectUI.renderMode = RenderMode.WorldSpace;
+            collectUI.worldCamera = Camera.main;
+            collectUI.sortingOrder = 100; // Đảm bảo hiện trên các UI khác
+            
+            // Thêm CanvasScaler để scale đúng
+            CanvasScaler scaler = uiObject.AddComponent<CanvasScaler>();
+            //scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantWorldSize;
+            scaler.referenceResolution = new Vector2(800, 600);
+            
+            // Thêm GraphicRaycaster để detect mouse events
+            uiObject.AddComponent<GraphicRaycaster>();
+            
+            // Set kích thước Canvas
+            RectTransform canvasRect = collectUI.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(3, 0.8f);
+            
+            // Tạo background panel
+            CreateBackgroundPanel();
+            
+            // Tạo text
+            CreateCollectText();
+            
+            // Ẩn UI ban đầu
+            uiObject.SetActive(false);
+        }
+        
+        void CreateBackgroundPanel()
+        {
+            // Tạo GameObject cho background
+            GameObject backgroundObject = new GameObject("Background");
+            backgroundObject.transform.SetParent(uiObject.transform, false);
+            
+            // Thêm Image component
+            backgroundImage = backgroundObject.AddComponent<Image>();
+            backgroundImage.color = backgroundColor;
+            backgroundImage.sprite = CreateBackgroundSprite();
+            
+            // Set RectTransform
+            RectTransform bgRect = backgroundObject.GetComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.sizeDelta = Vector2.zero;
+            bgRect.anchoredPosition = Vector2.zero;
+        }
+
+        void CreateCollectText()
+        {
+            // Tạo GameObject cho text
+            GameObject textObject = new GameObject("CollectText");
+            textObject.transform.SetParent(uiObject.transform, false);
+
+            // Thêm Text component
+            collectText = textObject.AddComponent<Text>();
+            textObject.transform.localScale = Vector3.one * 0.01f; // Scale nhỏ để phù hợp với World Space Canvas
+
+            // Setup font
+            if (textFont != null)
             {
-                CreateAutoUI();
+                collectText.font = textFont;
             }
             else
             {
-                SetupManualUI();
+                collectText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             }
-        }
-        
-        void CreateAutoUI()
-        {
-            // Tạo Canvas object
-            GameObject canvasObj = new GameObject($"CollectUI_{itemData?.itemName ?? "Item"}");
-            canvasObj.transform.SetParent(transform);
-            canvasObj.transform.localPosition = uiOffset;
-            
-            // Setup Canvas component
-            collectUI = canvasObj.AddComponent<Canvas>();
-            collectUI.renderMode = RenderMode.WorldSpace;
-            collectUI.worldCamera = mainCamera;
-            
-            // Thiết lập kích thước canvas
-            RectTransform canvasRect = collectUI.GetComponent<RectTransform>();
-            canvasRect.sizeDelta = new Vector2(200, 50);
-            canvasRect.localScale = Vector3.one * 0.01f; // Scale nhỏ lại cho phù hợp
-            
-            // Tạo background panel
-            GameObject panelObj = new GameObject("Background");
-            panelObj.transform.SetParent(canvasObj.transform, false);
-            
-            Image panelImage = panelObj.AddComponent<Image>();
-            panelImage.color = backgroundColor;
-            
-            RectTransform panelRect = panelObj.GetComponent<RectTransform>();
-            panelRect.anchorMin = Vector2.zero;
-            panelRect.anchorMax = Vector2.one;
-            panelRect.sizeDelta = Vector2.zero;
-            panelRect.anchoredPosition = Vector2.zero;
-            
-            // Tạo Text object
-            GameObject textObj = new GameObject("CollectText");
-            textObj.transform.SetParent(panelObj.transform, false);
-            
-            collectText = textObj.AddComponent<Text>();
-            collectText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            collectText.text = $"Press {collectKey} to collect {itemData?.itemName ?? "Item"}";
+
+            // Setup text properties
             collectText.fontSize = fontSize;
             collectText.color = textColor;
             collectText.alignment = TextAnchor.MiddleCenter;
-            
-            RectTransform textRect = collectText.GetComponent<RectTransform>();
+            collectText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            collectText.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // Set text content
+            UpdateTextContent();
+
+            // Set RectTransform
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
             textRect.sizeDelta = Vector2.zero;
             textRect.anchoredPosition = Vector2.zero;
+
+            // Add padding
+            //textRect.offsetMin = new Vector2(10, 10); // Padding left, bottom
+            //textRect.offsetMax = new Vector2(-10, -10); // Padding right, top
             
-            // Thêm Graphic Raycaster để canvas có thể nhận input
-            canvasObj.AddComponent<GraphicRaycaster>();
-            
-            // Ẩn UI ban đầu
-            collectUI.gameObject.SetActive(false);
-            
-            Debug.Log($"Auto-generated UI created for {itemData?.itemName ?? "Item"}");
         }
         
-        void SetupManualUI()
+        Sprite CreateBackgroundSprite()
         {
-            if (collectUI != null)
-            {
-                collectUI.gameObject.SetActive(false);
-                collectUI.worldCamera = mainCamera;
-            }
+            // Tạo texture 1x1 pixel
+            Texture2D texture = new Texture2D(1, 1);
+            texture.SetPixel(0, 0, Color.white);
+            texture.Apply();
             
-            if (collectText != null)
+            // Tạo sprite từ texture
+            return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+        }
+        
+        void UpdateTextContent()
+        {
+            if (collectText != null && itemData != null)
             {
-                collectText.text = $"Press {collectKey} to collect {itemData?.itemName ?? "Item"}";
+                collectText.text = $"Appuyez sur [{collectKey}] pour ramasser";
             }
         }
         
@@ -127,16 +178,6 @@ namespace InventoryPlus
             CheckPlayerDistance();
             HandleInput();
             UpdateUIRotation();
-        }
-        
-        void UpdateUIRotation()
-        {
-            // Làm cho UI luôn hướng về phía camera
-            if (collectUI != null && mainCamera != null && collectUI.gameObject.activeInHierarchy)
-            {
-                collectUI.transform.LookAt(collectUI.transform.position + mainCamera.transform.rotation * Vector3.forward,
-                                         mainCamera.transform.rotation * Vector3.up);
-            }
         }
         
         void CheckPlayerDistance()
@@ -151,91 +192,113 @@ namespace InventoryPlus
         
         void UpdateUIVisibility()
         {
-            bool shouldShowUI = isPlayerNear && isMouseOver;
+            // Bỏ điều kiện isMouseOver vì chuột có thể bị tắt
+            bool shouldShowUI = isPlayerNear;
             
-            if (collectUI != null)
+            if (uiObject != null)
             {
-                collectUI.gameObject.SetActive(shouldShowUI);
+                uiObject.SetActive(shouldShowUI);
+            }
+        }
+        
+        void UpdateUIRotation()
+        {
+            // Làm cho UI luôn quay về phía camera
+            if (uiObject != null && uiObject.activeInHierarchy && Camera.main != null)
+            {
+                uiObject.transform.LookAt(Camera.main.transform);
+                uiObject.transform.Rotate(0, 180, 0); // Flip để text không bị ngược
             }
         }
         
         void HandleInput()
         {
-            if (isPlayerNear && isMouseOver && Input.GetKeyDown(collectKey))
+            if (isPlayerNear && Input.GetKeyDown(collectKey))
             {
                 CollectItem();
             }
         }
-        
+
         void CollectItem()
         {
             // Trigger collection event
             OnItemCollected?.Invoke(itemData, amount);
-            
+
             // Play audio if available
-            if (itemData?.useAudio != null)
+            if (itemData != null && itemData.useAudio != null)
             {
                 AudioSource.PlayClipAtPoint(itemData.useAudio, transform.position);
             }
-            
-            // Hide UI and destroy object
-            if (collectUI != null)
+
+            playerInventory.AddInventory(itemData, amount, 0f, false);
+            // Destroy UI object
+            if (uiObject != null)
             {
-                collectUI.gameObject.SetActive(false);
+                Destroy(uiObject);
             }
-            
-            Debug.Log($"Collected {amount}x {itemData?.itemName ?? "Item"}");
+
+            // Destroy item object
             Destroy(gameObject);
+            taskManager.CompleteTask(1); // Giả sử ID nhiệm vụ là 0, thay đổi theo nhu cầu
         }
         
-        // Mouse events
+        // Mouse events (optional - có thể bỏ nếu chuột bị tắt)
         void OnMouseEnter()
         {
             isMouseOver = true;
-            UpdateUIVisibility();
         }
         
         void OnMouseExit()
         {
             isMouseOver = false;
-            UpdateUIVisibility();
+        }
+        
+        // Cleanup khi destroy
+        void OnDestroy()
+        {
+            if (uiObject != null)
+            {
+                Destroy(uiObject);
+            }
         }
         
         // Gizmos để debug
-        public void OnDrawGizmos()
+        void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, detectionRadius);
             
-            // Vẽ vị trí UI offset
-            if (autoCreateUI)
+            // Draw UI position
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position + uiOffset, new Vector3(3f, 0.8f, 0.1f));
+        }
+        
+        // Public methods để customize từ bên ngoài
+        public void SetTextColor(Color color)
+        {
+            textColor = color;
+            if (collectText != null)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(transform.position + uiOffset, Vector3.one * 0.5f);
+                collectText.color = color;
             }
         }
         
-        // Method để cập nhật text runtime
-        public void UpdateCollectText(string newText)
+        public void SetBackgroundColor(Color color)
         {
-            if (collectText != null)
+            backgroundColor = color;
+            if (backgroundImage != null)
             {
-                collectText.text = newText;
+                backgroundImage.color = color;
             }
         }
         
-        // Method để thay đổi màu UI runtime
-        public void SetUIColors(Color textCol, Color bgCol)
+        public void SetUIOffset(Vector3 offset)
         {
-            textColor = textCol;
-            backgroundColor = bgCol;
-            
-            if (collectText != null)
-                collectText.color = textColor;
-                
-            Image bgImage = collectUI?.GetComponentInChildren<Image>();
-            if (bgImage != null)
-                bgImage.color = backgroundColor;
+            uiOffset = offset;
+            if (uiObject != null)
+            {
+                uiObject.transform.localPosition = offset;
+            }
         }
     }
 }

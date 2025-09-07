@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance;
     public GameObject dialoguePanel;
     public GameObject dialogueUI;
+    public TaskManager taskManager;
+
     public CinemachineCamera dialogueCamera;
     public CinemachineCamera playerCamera;
     public TextMeshProUGUI dialogueText;
@@ -113,6 +115,8 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Kết thúc hội thoại.");
         OnDialogueEnded?.Invoke();
         // Bắt đầu chuyển về camera người chơi mượt mà
+        taskManager.CompleteTask(0); // Giả sử ID nhiệm vụ là 0, thay đổi theo nhu cầu
+
         StartCoroutine(SwitchToPlayerCameraSmooth());
     }
     

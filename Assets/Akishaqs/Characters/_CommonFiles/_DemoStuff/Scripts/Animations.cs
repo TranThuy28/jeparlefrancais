@@ -59,9 +59,6 @@ public class Animations : MonoBehaviour
        */
     void Update()
     {
-        bool isCrouch = _anim.GetBool(isCrouchingHash);
-        bool CPress = Input.GetKeyDown(KeyCode.C);
-
         bool isRunning = _anim.GetBool(isRunningHash);
         bool ShiftPress = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
@@ -85,15 +82,6 @@ public class Animations : MonoBehaviour
         bool Running = isRunning || isRunningLeft || isRunningRight || isRunTurning;
 
         bool isJumping = Input.GetKeyDown(KeyCode.Space);
-
-        if (!isCrouch && CPress)  // Nhấn phím C để cúi người
-        {
-            _anim.SetBool(isCrouchingHash, true);
-        }
-        if (isCrouch && CPress)
-        {
-            _anim.SetBool(isCrouchingHash, false);
-        }
 
         if (!isRunning && ShiftPress && WPress)
         {
