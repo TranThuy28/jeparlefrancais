@@ -26,7 +26,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Une noix de coco tropicale, riche en eau et en chair comestible.
     Peut \xEAtre consomm\xE9e telle quelle ou utilis\xE9e comme ingr\xE9dient dans
     des recettes et potions."

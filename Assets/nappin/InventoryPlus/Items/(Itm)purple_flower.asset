@@ -26,7 +26,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Une fleur violette d\xE9licate, symbole de beaut\xE9 et de myst\xE8re.
     Peut servir de d\xE9coration ou comme ingr\xE9dient pour des potions."
   itemRarity: 1

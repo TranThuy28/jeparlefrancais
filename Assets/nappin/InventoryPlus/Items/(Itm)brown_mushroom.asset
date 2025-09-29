@@ -15,21 +15,18 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 9a031478f0cfc9648967eaf0204e35b4, type: 3}
   itemPrefab: {fileID: 1556849504462572, guid: 419f082ddb6aa7845b651531eb60c0d8, type: 3}
   itemChapter: 0
-  itemName: Champignon brun
+  itemName: brown mushroom
   itemID: 
   itemCategory: mushroom
   isStackable: 1
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
-  sellingPrice: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
-  itemDescription: "Un champignon brun comestible que l\u2019on trouve dans les for\xEAts
-    et les prairies. Peut \xEAtre utilis\xE9 comme ingr\xE9dient de cuisine ou dans
-    des potions simples. "
+  itemAttribute: material
+  itemDescription: 
   itemRarity: 0
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}

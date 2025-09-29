@@ -26,7 +26,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Un champignon jaune savoureux, trouv\xE9 dans les prairies et
     les for\xEAts. Peut \xEAtre utilis\xE9 en cuisine ou pour pr\xE9parer des potions
     simples."

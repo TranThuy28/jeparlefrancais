@@ -26,11 +26,11 @@ MonoBehaviour:
   usageCost: 0
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Une jolie fleur rose qui apporte couleur et beaut\xE9 au jardin.
     Peut \xEAtre utilis\xE9e comme d\xE9coration ou ingr\xE9dient pour des potions
     florales."
-  itemRarity: 0
+  itemRarity: 2
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}
   equipAudio: {fileID: 0}

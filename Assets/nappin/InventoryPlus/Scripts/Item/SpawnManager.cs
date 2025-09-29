@@ -38,7 +38,6 @@ namespace InventoryPlus
 
         void Start()
         {
-            AutoSpawn();
             Initialize();
         }
 
@@ -138,7 +137,7 @@ namespace InventoryPlus
         // Spawn ngẫu nhiên có trọng số
         public GameObject SpawnRandomWeightedItem(Vector3? position = null)
         {
-                List<Item> availableItems = chapterFilter.FilterItems(itemDatabase.AllItems);
+            List<Item> availableItems = chapterFilter.FilterItems(itemDatabase.AllItems);
 
             if (availableItems.Count == 0)
             {

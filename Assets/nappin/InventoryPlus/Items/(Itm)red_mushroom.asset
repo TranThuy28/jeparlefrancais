@@ -16,7 +16,9 @@ MonoBehaviour:
   itemPrefab: {fileID: 102636, guid: 6df69aa4c7dd16842b1448e84b884e15, type: 3}
   itemChapter: 0
   itemName: Champignon rouge
-  itemID: 
+  itemID: "Un champignon rouge comestible, que l\u2019on trouve souvent dans les
+    for\xEAts. Peut \xEAtre utilis\xE9 comme ingr\xE9dient de cuisine ou pour des
+    potions simples."
   itemCategory: mushroom
   isStackable: 1
   stackSize: 9999
@@ -26,10 +28,8 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
-  itemDescription: "Un champignon rouge comestible, que l\u2019on trouve souvent
-    dans les for\xEAts. Peut \xEAtre utilis\xE9 comme ingr\xE9dient de cuisine ou
-    pour des potions simples."
+  itemAttribute: material
+  itemDescription: 
   itemRarity: 0
   useAudio: {fileID: 0}
   dropAudio: {fileID: 0}

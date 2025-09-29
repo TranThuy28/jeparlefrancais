@@ -49,13 +49,11 @@ namespace InventoryPlus
         /**/
 
         // Thêm method để toggle inventory
-
         public void ToggleInventory()
         {
             isInventoryOpen = !isInventoryOpen;
             ShowInventory(true);
             ShowHotbar(true);
-            Debug.Log("Toggled inventory, is now " + (isInventoryOpen ? "open" : "closed"));
             if (true)
             {
                 // Clear any swap state when opening inventory
@@ -70,7 +68,7 @@ namespace InventoryPlus
 
         #region Setup
 
-        private void Start()
+        private void Awake()
         {
             if (!wasLoaded)
             {
@@ -82,8 +80,9 @@ namespace InventoryPlus
             }
             ShowInventory(true);
             ShowHotbar(true);
-            SelectFirstInventorySlot();
+            //SelectFirstInventorySlot();
         }
+
 
         public void LoadInventory(List<ItemSlot> _items)
         {

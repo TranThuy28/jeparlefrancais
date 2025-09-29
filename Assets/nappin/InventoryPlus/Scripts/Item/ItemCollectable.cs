@@ -20,7 +20,7 @@ namespace InventoryPlus
         [Header("Settings")]
         public float detectionRadius = 3f;
         public KeyCode collectKey = KeyCode.C;
-        
+        TaskManager taskManager;
         private Transform player;
         private Inventory playerInventory;
         private bool isPlayerNear = false;
@@ -39,6 +39,15 @@ namespace InventoryPlus
         {
             // Tìm player
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
+            TaskManager[] allTaskManagers = Resources.FindObjectsOfTypeAll<TaskManager>();
+            foreach (TaskManager tm in allTaskManagers)
+            {
+                if (tm.gameObject.name == "ScrollRect1234")
+                {
+                    taskManager = tm;
+                    break;
+                }
+            }
 
             playerInventory = FindAnyObjectByType<Inventory>(FindObjectsInactive.Include);
             
@@ -209,27 +218,28 @@ namespace InventoryPlus
                 CollectItem();
             }
         }
-        
+
         void CollectItem()
         {
             // Trigger collection event
             OnItemCollected?.Invoke(itemData, amount);
-            
+
             // Play audio if available
             if (itemData != null && itemData.useAudio != null)
             {
                 AudioSource.PlayClipAtPoint(itemData.useAudio, transform.position);
             }
-            
+
             playerInventory.AddInventory(itemData, amount, 0f, false);
             // Destroy UI object
             if (uiObject != null)
             {
                 Destroy(uiObject);
             }
-            
+
             // Destroy item object
             Destroy(gameObject);
+            taskManager.CompleteTask(1); // Giả sử ID nhiệm vụ là 0, thay đổi theo nhu cầu
         }
         
         // Mouse events (optional - có thể bỏ nếu chuột bị tắt)

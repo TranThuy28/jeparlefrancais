@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using InventoryPlus;
+using System;
+using UnityEditor;
 
 namespace InventoryPlus
 {
@@ -11,18 +14,27 @@ namespace InventoryPlus
         public Inventory inventory; // Tham chiếu đến Inventory để lấy item
         public UISlot[] inputSlots = new UISlot[4]; // 4 ô input
         public UISlot outputSlot; // Ô output
-        public Text explainText; // Text để hiển thị giải thích
         public Animator anim;
         public List<ItemSlot> inputItems = new List<ItemSlot>();
         public List<CraftingRecipe> recipes = new List<CraftingRecipe>(); // Danh sách công thức
         public AudioSource audioSource; // Nguồn âm thanh để phát âm thanh
-        public ItemDatabase itemDatabase; // Tham chiếu đến ItemDatabase
+        TaskManager taskManager;
+        public Text text;
+        public ItemDatabase itemDatabase;
         private Button button;
-
-        private bool canCraft = false;
 
         private void Awake()
         {
+                        TaskManager[] allTaskManagers = Resources.FindObjectsOfTypeAll<TaskManager>();
+            foreach (TaskManager tm in allTaskManagers)
+            {
+                if (tm.gameObject.name == "ScrollRect1234")
+                {
+                    taskManager = tm;
+                    break;
+                }
+            }
+
             button = GetComponent<Button>();
             if (button == null)
             {
@@ -31,36 +43,26 @@ namespace InventoryPlus
             }
             button.onClick.AddListener(TryCraft);
 
-            //recipes.Add(new CraftingRecipe());
-            
-            CraftingRecipe recipe1 = CreateRecipe(
-                    itemDatabase.GetItemByID("0"),
-                    "Wooden Sword Recipe"
-                );
-            CraftingRecipe recipe2 = CreateRecipe(
-                    itemDatabase.GetItemByID("1"),
-                    "Wooden Shield Recipe"
-                );
-            recipes.Add(recipe1);
-            recipes.Add(recipe2);
-
-            Debug.Log($"Initialized {recipes.Count} recipes.");
+            recipes.Add(CreateRecipe("Wooden Sword", itemDatabase.GetItemByID("0")));
+            recipes.Add(CreateRecipe("Stone Sword", itemDatabase.GetItemByID("1")));
+            //Debug.LogError($"Total recipes loaded: {recipes.Count}");
             SubscribeToSlotEvents();
 
             UpdateButtonState(); // Khởi tạo trạng thái nút
         }
 
-        private CraftingRecipe CreateRecipe(Item result, string recipeName)
+        private CraftingRecipe CreateRecipe(string recipeName, Item result)
         {
-            var recipe = ScriptableObject.CreateInstance<CraftingRecipe>();
-            recipe.name = recipeName;
-            recipe.result = result;
-            recipe.categoryRequirements = new List<CategoryRequirement>();
-
-            recipe.categoryRequirements.Add(new CategoryRequirement("plant", 1));
-
-            return recipe;
+            // Tạo một công thức mới
+            CraftingRecipe newRecipe = new CraftingRecipe();
+            newRecipe.recipeName = recipeName;
+            newRecipe.result = result;
+            Debug.Log($"Created recipe for {recipeName} producing {result.itemName}");
+            newRecipe.categoryRequirements = new List<CategoryRequirement>();
+            newRecipe.categoryRequirements.Add(new CategoryRequirement { itemCategory = "plant", minCount = 1 });
+            return newRecipe;
         }
+
         private void OnEnable()
         {
             SubscribeToSlotEvents();
@@ -114,16 +116,11 @@ namespace InventoryPlus
 
         private void TryCraft()
         {
-            Debug.Log("TryCraft called");
             try
             {
                 RefreshInputItems(); // Cập nhật inputItems từ slots
 
                 // Kiểm tra công thức
-                for (int i = 0; i < recipes.Count; i++)
-                {
-                    Debug.Log($"Recipe {i}: {recipes[i].result.name}");
-                }
                 var (isValid, result, failureReason) = CraftingUtils.CheckCraftingRecipe(inputItems, recipes);
 
                 if (isValid && result != null && inventory.GetInventorySlot(outputSlot) == null)
@@ -140,7 +137,10 @@ namespace InventoryPlus
                             {
                                 audioSource.Play();
                             }
-                            //Debug.Log($"Crafting Success! Created: {result.name}");
+                            Debug.Log($"Crafting Success! Created: {result.name}");
+                            taskManager.CompleteTask(2); // Hoàn thành nhiệm vụ có ID 2
+                            text.text = $"Vous avez créé {result.itemName}!";
+                            
 
                             // Sử dụng items từ input slots
                             foreach (var slot in inputSlots)
@@ -193,16 +193,6 @@ namespace InventoryPlus
             }
         }
 
-        private void Update()
-        {
-            // Kiểm tra input phím Space khi có thể craft
-            if (canCraft && Input.GetKeyDown(KeyCode.Space))
-            {
-                TryCraft();
-            }
-        }
-
-
         // Phương thức an toàn để cập nhật output slot
         private void SafeUpdateOutputSlot(ItemSlot itemSlot)
         {
@@ -246,7 +236,7 @@ namespace InventoryPlus
             allSlotsFilled = filledSlots >= 4; // Cần tất cả 4 slots
 
             // Thêm kiểm tra công thức để chắc chắn có thể craft
-            canCraft = allSlotsFilled && inventory.GetInventorySlot(outputSlot) == null;
+            bool canCraft = allSlotsFilled && inventory.GetInventorySlot(outputSlot) == null;
             // if (allSlotsFilled)
             // {
             //     try
@@ -260,9 +250,11 @@ namespace InventoryPlus
             //         canCraft = false;
             //     }
             //}
-
+            if(inventory.GetInventorySlot(outputSlot) == null)
+            {
+                text.text = allSlotsFilled ? "appuyons sur la flèche" : "Vous avez besoin de quatre articles pour créer";
+            }
             button.interactable = canCraft;
-            explainText.GetComponent<Text>().text = canCraft ? "Cliquez sur l'espace pour créer" : "Vous avez besoin de quatre articles pour créer";
             if (!canCraft)
             {
                 anim.SetTrigger("Normal");

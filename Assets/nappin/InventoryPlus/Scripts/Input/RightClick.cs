@@ -62,9 +62,9 @@ namespace InventoryPlus
             menuOptions.Clear();
             
             // Add default options
-            menuOptions.Add(new MenuOption("Vendre", null, SellItem));
-            menuOptions.Add(new MenuOption("Vendre Tout", null, SellAllItem));
-            menuOptions.Add(new MenuOption("Trier", null, SortItem));
+            menuOptions.Add(new MenuOption("Sell", null, SellItem));
+            menuOptions.Add(new MenuOption("Sell All", null, SellAllItem));
+            menuOptions.Add(new MenuOption("Sort", null, SortItem));
         }
         
         #endregion
@@ -142,9 +142,9 @@ namespace InventoryPlus
         
         private void CreateMenuDynamically(Vector2 position)
         {
-            Debug.Log("Création du menu contextuel dynamique à la position: " + position);
+            Debug.Log("Creating dynamic context menu at position: " + position);
             // Create menu container
-            currentMenu = new GameObject("MenuContextuel");
+            currentMenu = new GameObject("ContextMenu");
             currentMenu.transform.SetParent(inventory.transform);
             
             // Add background
@@ -191,7 +191,7 @@ namespace InventoryPlus
             button.targetGraphic = buttonImage;
             
             // Add text
-            GameObject textObj = new GameObject("Texte");
+            GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(buttonObj.transform);
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = menuOptions[optionIndex].optionName;
@@ -287,13 +287,13 @@ namespace InventoryPlus
             currentConfirmationDialog = Instantiate(confirmationDialogPrefab, inventory.transform.root);
             
             // Tìm và setup các component
-            TextMeshProUGUI titleText = currentConfirmationDialog.transform.Find("Titre")?.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI titleText = currentConfirmationDialog.transform.Find("Title")?.GetComponent<TextMeshProUGUI>();
             if (titleText != null) titleText.text = title;
             
             TextMeshProUGUI messageText = currentConfirmationDialog.transform.Find("Message")?.GetComponent<TextMeshProUGUI>();
             if (messageText != null) messageText.text = message;
             
-            Button confirmButton = currentConfirmationDialog.transform.Find("BoutonConfirmer")?.GetComponent<Button>();
+            Button confirmButton = currentConfirmationDialog.transform.Find("ConfirmButton")?.GetComponent<Button>();
             if (confirmButton != null)
             {
                 confirmButton.onClick.RemoveAllListeners();
@@ -303,7 +303,7 @@ namespace InventoryPlus
                 });
             }
             
-            Button cancelButton = currentConfirmationDialog.transform.Find("BoutonAnnuler")?.GetComponent<Button>();
+            Button cancelButton = currentConfirmationDialog.transform.Find("CancelButton")?.GetComponent<Button>();
             if (cancelButton != null)
             {
                 cancelButton.onClick.RemoveAllListeners();
@@ -317,7 +317,7 @@ namespace InventoryPlus
         private void CreateConfirmationDynamically(string title, string message, System.Action onConfirm, System.Action onCancel)
         {
             // Tạo overlay background
-            GameObject overlay = new GameObject("SuperpositionConfirmation");
+            GameObject overlay = new GameObject("ConfirmationOverlay");
             overlay.transform.SetParent(inventory.transform.root);
             
             Image overlayImage = overlay.AddComponent<Image>();
@@ -330,7 +330,7 @@ namespace InventoryPlus
             overlayRect.offsetMax = Vector2.zero;
             
             // Tạo dialog container
-            currentConfirmationDialog = new GameObject("DialogueConfirmation");
+            currentConfirmationDialog = new GameObject("ConfirmationDialog");
             currentConfirmationDialog.transform.SetParent(overlay.transform);
             
             // Background của dialog
@@ -360,13 +360,13 @@ namespace InventoryPlus
             dialogLayoutElement.minWidth = 600;
             dialogLayoutElement.minHeight = 500;
             // Tạo title
-            CreateDialogText(title, 50, TextAlignmentOptions.Center, "TitreDialogue");
+            CreateDialogText(title, 50, TextAlignmentOptions.Center, "DialogTitle");
             
             // Tạo message
-            CreateDialogText(message, 35, TextAlignmentOptions.Center, "MessageDialogue");
+            CreateDialogText(message, 35, TextAlignmentOptions.Center, "DialogMessage");
             
             // Tạo button container
-            GameObject buttonContainer = new GameObject("ConteneurBoutons");
+            GameObject buttonContainer = new GameObject("ButtonContainer");
             buttonContainer.transform.SetParent(currentConfirmationDialog.transform);
             
             HorizontalLayoutGroup buttonLayout = buttonContainer.AddComponent<HorizontalLayoutGroup>();
@@ -380,13 +380,13 @@ namespace InventoryPlus
             buttonContainer.transform.localScale = Vector3.one;
 
             // Tạo Confirm button
-            CreateDialogButton("Oui", buttonContainer, () => {
+            CreateDialogButton("Yes", buttonContainer, () => {
                 onConfirm?.Invoke();
                 HideConfirmationDialog();
             }, new Color(0.2f, 0.7f, 0.2f, 1f));
             
             // Tạo Cancel button
-            CreateDialogButton("Non", buttonContainer, () => {
+            CreateDialogButton("No", buttonContainer, () => {
                 onCancel?.Invoke();
                 HideConfirmationDialog();
             }, new Color(0.7f, 0.2f, 0.2f, 1f));
@@ -417,18 +417,18 @@ namespace InventoryPlus
         
         private void CreateDialogButton(string buttonText, GameObject parent, System.Action onClick, Color buttonColor)
         {
-            GameObject buttonObj = new GameObject(buttonText + "Bouton");
+            GameObject buttonObj = new GameObject(buttonText + "Button");
             buttonObj.transform.SetParent(parent.transform);
             
             Button button = buttonObj.AddComponent<Button>();
             Image buttonImage = buttonObj.AddComponent<Image>();
-            buttonImage.sprite = Resources.Load<Sprite>(buttonText == "Oui" ? "28button_green" : "30button_red");
+            buttonImage.sprite = Resources.Load<Sprite>(buttonText == "Yes" ? "28button_green" : "30button_red");
             buttonImage.color = buttonColor;
             button.targetGraphic = buttonImage;
             buttonObj.transform.localScale = Vector3.one;
             
             // Button text
-            GameObject textObj = new GameObject("Texte");
+            GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(buttonObj.transform);
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
             text.text = buttonText;
@@ -468,7 +468,7 @@ namespace InventoryPlus
             {
                 // Nếu có overlay, destroy overlay (sẽ destroy cả dialog)
                 if (currentConfirmationDialog.transform.parent != null && 
-                    currentConfirmationDialog.transform.parent.name == "SuperpositionConfirmation")
+                    currentConfirmationDialog.transform.parent.name == "ConfirmationOverlay")
                 {
                     Destroy(currentConfirmationDialog.transform.parent.gameObject);
                 }
@@ -491,11 +491,11 @@ namespace InventoryPlus
             string itemName = inventorySlot.GetItemType().itemName;
             int totalPrice = inventorySlot.GetItemType().sellingPrice * itemCount;
             
-            string message = $"Voulez-vous vendre tous les {itemName}?\n" +
-                        $"Quantité: {itemCount}\n" +
-                        $"Prix total: {totalPrice} pièces";
+            string message = $"Do you want to sell all {itemName}?\n" +
+                        $"Quantity: {itemCount}\n" +
+                        $"Total price: {totalPrice} coins";
             
-            ShowConfirmationDialog("Confirmer Vendre Tout", message, () => {
+            ShowConfirmationDialog("Confirm Sell All", message, () => {
                 // Execute sell all
                 gameManager.currencyManager.AddCoins(totalPrice);
                 for (int i = 0; i < itemCount; i++)
@@ -504,14 +504,14 @@ namespace InventoryPlus
                 }
                 
                 // Show success notification instead of debug log
-                string successMessage = $"Vendu avec succès {itemCount} {itemName} pour {totalPrice} pièces";
-                // ShowNotification("Vente Terminée", successMessage);
+                string successMessage = $"Successfully sold {itemCount} {itemName} for {totalPrice} coins";
+                // ShowNotification("Sale Complete", successMessage);
             });
         }
         
         private void DropItem(UISlot slot)
         {
-            Debug.Log("Lâcher l'objet: " + slot.name);
+            Debug.Log("Dropping item: " + slot.name);
             // Implement drop item logic here
             // Example: inventory.DropItem(slot);
         }
@@ -522,17 +522,17 @@ namespace InventoryPlus
             string itemName = inventorySlot.GetItemType().itemName;
             int sellingPrice = inventorySlot.GetItemType().sellingPrice;
             
-            string message = $"Voulez-vous vendre {itemName}?\n" +
-                        $"Prix de vente: {sellingPrice} pièces";
+            string message = $"Do you want to sell {itemName}?\n" +
+                        $"Selling price: {sellingPrice} coins";
             
-            ShowConfirmationDialog("Confirmer Vente d'Objet", message, () => {
+            ShowConfirmationDialog("Confirm Item Sale", message, () => {
                 // Execute sale
                 gameManager.currencyManager.AddCoins(sellingPrice);
                 inventory.UseItem(slot);
                 
                 // Show success notification instead of debug log
-                string successMessage = $"Vendu avec succès {itemName} pour {sellingPrice} pièces";
-                //ShowNotification("Objet Vendu", successMessage);
+                string successMessage = $"Successfully sold {itemName} for {sellingPrice} coins";
+                //ShowNotification("Item Sold", successMessage);
             });
         }
 

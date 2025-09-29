@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: New Crafting Recipe
+  m_EditorClassIdentifier: Assembly-CSharp:InventoryPlus:CraftingRecipe
+  recipeName: 
+  result: {fileID: 11400000, guid: 0eb87b4b2b214c6429157b5c6ec1ea55, type: 2}
+  tier: 6
+  categoryRequirements:
+  - itemCategory: plant
+    minCount: 2
+  description: 

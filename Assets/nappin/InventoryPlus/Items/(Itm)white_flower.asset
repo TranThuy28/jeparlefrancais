@@ -16,7 +16,8 @@ MonoBehaviour:
   itemPrefab: {fileID: 1072093547380432, guid: f31f7482def1d45458fcd586c2c9cc13, type: 3}
   itemChapter: 0
   itemName: Fleur blanche
-  itemID: 
+  itemID: "Une fleur blanche pure et \xE9l\xE9gante, parfaite pour embellir un jardin
+    ou cr\xE9er des potions florales."
   itemCategory: plant
   isStackable: 1
   stackSize: 9999
@@ -26,7 +27,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Une fleur blanche pure et \xE9l\xE9gante, parfaite pour embellir
     un jardin ou cr\xE9er des potions florales."
   itemRarity: 0

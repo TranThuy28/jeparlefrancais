@@ -26,7 +26,7 @@ MonoBehaviour:
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: "Une belle fleur rouge qui apporte chaleur et couleur au jardin.
     Peut \xEAtre utilis\xE9e comme d\xE9coration ou ingr\xE9dient pour des potions
     florales."

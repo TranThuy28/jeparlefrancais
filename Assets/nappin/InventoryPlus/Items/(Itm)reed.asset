@@ -22,11 +22,10 @@ MonoBehaviour:
   stackSize: 9999
   isDurable: 0
   maxDurability: 100
-  sellingPrice: 100
   usageCost: 1
   hasDamagedSprites: 0
   damagedSprites: []
-  itemAttribute: "mat\xE9riau"
+  itemAttribute: material
   itemDescription: 
   itemRarity: 0
   useAudio: {fileID: 0}
