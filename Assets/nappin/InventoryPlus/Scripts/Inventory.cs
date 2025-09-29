@@ -68,7 +68,7 @@ namespace InventoryPlus
 
         #region Setup
 
-        private void Start()
+        private void Awake()
         {
             if (!wasLoaded)
             {

@@ -20,6 +20,7 @@ public class WhackAMoleGame : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public Button startButton;
     public Button restartButton;
+    public GameObject gamePanel; // Panel chứa toàn bộ game UI
     
     [Header("Game Objects")]
     public GameObject holePrefab;
@@ -41,23 +42,71 @@ public class WhackAMoleGame : MonoBehaviour
     private float currentTime;
     private bool gameActive = false;
     private AudioSource audioSource;
-    
-    void Start()
+    private bool gameVisible = false; // Trạng thái hiển thị game
+
+    void Awake()
     {
+        //Debug.LogError("aksbjascksajbkcbakjb");
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
-            
+
         holes = new List<MoleHole>();
         SetupGame();
         UpdateUI();
-        
+
         startButton.onClick.AddListener(StartGame);
         restartButton.onClick.AddListener(RestartGame);
         restartButton.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
+
+        // Ẩn game khi bắt đầu
+        if (gamePanel != null)
+            gamePanel.SetActive(false);
+        gameVisible = false;
+        //Debug.LogError("WhackAMole Script đã khởi động!");
     }
     
+void Update()
+{
+    //Debug.LogError("WhackAMole Script đã khởi động!");
+    if (Input.GetKeyDown(KeyCode.M))
+        {
+            //Debug.Log("Phím M được nhấn qua Update!");
+            ToggleGame();
+        }
+}
+
+void ToggleGame()
+{
+    gameVisible = !gameVisible;
+    
+    if (gamePanel != null)
+    {
+        gamePanel.SetActive(gameVisible);
+    }
+    
+    // Nếu đang tắt game và game đang chạy, dừng game
+    if (!gameVisible && gameActive)
+    {
+        EndGame();
+    }
+
+    // Thêm bật/tắt chuột
+    if (gameVisible)
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;   // thả tự do
+    }
+    else
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked; // khóa vào giữa màn hình
+    }
+    
+    //Debug.Log("Whack-a-Mole Game: " + (gameVisible ? "ON" : "OFF"));
+}
+
     void SetupGame()
     {
         // Clear existing holes

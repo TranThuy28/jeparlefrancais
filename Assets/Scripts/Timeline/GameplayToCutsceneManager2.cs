@@ -45,6 +45,9 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
     
     [Header("Debug")]
     public bool showDebugGizmos = true;
+
+    [Header("Audio")]
+    public AudioSource mainAudio;
     
     private bool cutsceneTriggered = false;
     private bool isInCutscene = false;
@@ -56,6 +59,7 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
     private Vector3 frozenPosition; // Vị trí được freeze trong cutscene
     private Quaternion frozenRotation; // Rotation được freeze trong cutscene
     private bool isPositionFrozen = false;
+
     
     void Start()
     {
@@ -116,11 +120,12 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
         {
             gameplayUI.gameObject.SetActive(false);
         }
-        
+
         // Disable gameplay camera
         if (gameplayCamera)
         {
             gameplayCamera.Priority = 50;
+            mainAudio.enabled = false;
         }
         
         // Enable cutscene camera
@@ -462,6 +467,7 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
         if (gameplayCamera)
         {
             gameplayCamera.Priority = 100;
+            mainAudio.enabled = true;
         }
 
         // Ẩn cutscene UI

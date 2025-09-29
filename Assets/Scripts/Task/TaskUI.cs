@@ -40,8 +40,8 @@ public class TaskUI : MonoBehaviour
             // Hiệu ứng khi hoàn thành: làm xám, hiện checkmark
             backgroundImage.color = completedColor;
             canvasGroup.alpha = 0.6f;
-//            checkmarkImage.gameObject.SetActive(true);
-//            checkmarkImage.color = checkmarkColor;
+            //            checkmarkImage.gameObject.SetActive(true);
+            //            checkmarkImage.color = checkmarkColor;
 
             // Gạch ngang text
             taskNameText.fontStyle = FontStyles.Strikethrough;
@@ -52,7 +52,7 @@ public class TaskUI : MonoBehaviour
             // Trạng thái bình thường
             backgroundImage.color = normalColor;
             canvasGroup.alpha = 1f;
-//            checkmarkImage.gameObject.SetActive(false);
+            //            checkmarkImage.gameObject.SetActive(false);
 
             // Bỏ gạch ngang
             taskNameText.fontStyle = FontStyles.Normal;
