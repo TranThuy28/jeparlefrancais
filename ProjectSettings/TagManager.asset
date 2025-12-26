@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - NPC
+  - Leak
   layers:
   - Default
   - TransparentFX

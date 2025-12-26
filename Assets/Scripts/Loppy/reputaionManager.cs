@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-// ===== REPUTATION MANAGER =====
+
 [System.Serializable]
 public class ReputationManager : MonoBehaviour
 {

@@ -48,6 +48,8 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource mainAudio;
+    [Header("Flood Manager")]
+    public FloodLevelManager floodManager; 
     
     private bool cutsceneTriggered = false;
     private bool isInCutscene = false;
@@ -59,7 +61,6 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
     private Vector3 frozenPosition; // Vị trí được freeze trong cutscene
     private Quaternion frozenRotation; // Rotation được freeze trong cutscene
     private bool isPositionFrozen = false;
-
     
     void Start()
     {
@@ -396,7 +397,18 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
         if (director == timelineDirector)
         {
             Debug.Log("=== CUTSCENE ENDED ===");
+
             EndCutscene();
+            if (floodManager != null) 
+            {
+                Debug.Log("Gọi FloodManager bắt đầu dâng nước!");
+                floodManager.StartGameplayLoop();
+            }
+            else
+            {
+                Debug.LogError("QUÊN KÉO FLOOD MANAGER VÀO RỒI BẠN ƠI!");
+            }
+//
         }
     }
     
