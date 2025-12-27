@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,12 @@ using UnityEngine;
 /// </summary>
 public class LeakSpot : MonoBehaviour
 {
+    /// <summary>
+    /// Static event that fires when any leak is repaired.
+    /// Subscribe to this event in FloodLevelManager to update UI.
+    /// </summary>
+    public static Action OnLeakRepaired;
+    
     [Header("Leak Settings")]
     [Tooltip("The particle system that represents the water spray. Should be a child of this GameObject.")]
     public ParticleSystem waterSpray;
@@ -121,7 +128,38 @@ public class LeakSpot : MonoBehaviour
         // Restore original visual appearance
         UpdateVisualIndicator(false);
         
+        // Fire event to notify listeners (like FloodLevelManager) that a leak was repaired
+        OnLeakRepaired?.Invoke();
+        
         Debug.Log("Repaired!");
+    }
+    
+    /// <summary>
+    /// Stops the leak without triggering repair events (used for resetting between levels).
+    /// </summary>
+    public void StopLeak()
+    {
+        isLeaking = false;
+        
+        // Stop particle system
+        if (waterSpray != null)
+        {
+            waterSpray.Stop();
+            var emission = waterSpray.emission;
+            emission.enabled = false;
+        }
+        
+        // Restore original visual appearance
+        UpdateVisualIndicator(false);
+    }
+    
+    /// <summary>
+    /// Public method to check if this leak is currently active.
+    /// Used by FloodLevelManager to count active leaks.
+    /// </summary>
+    public bool IsLeaking()
+    {
+        return isLeaking;
     }
     
     /// <summary>

@@ -66,6 +66,58 @@ public class GameplayToCutsceneManager2 : MonoBehaviour
     {
         Debug.Log("=== GAME STARTING ===");
         
+        // Check if we're restarting - skip cutscene if so
+        if (GameOverManager.IsRestarting)
+        {
+            Debug.Log("[GameplayToCutsceneManager2] Restart detected - skipping cutscene...");
+            
+            // Stop/disable the cutscene timeline
+            if (timelineDirector != null)
+            {
+                timelineDirector.Stop();
+                timelineDirector.enabled = false;
+            }
+            
+            // Set up gameplay position from spawn point
+            if (gameplayStartPosition != null)
+            {
+                gameplayPosition = gameplayStartPosition.position;
+                gameplayRotation = gameplayStartPosition.rotation;
+                useFixedGameplayPosition = true;
+                Debug.Log($"Gameplay position set from spawn point: {gameplayPosition}");
+            }
+            else if (playerCharacter != null)
+            {
+                // Fallback: use current position
+                gameplayPosition = playerCharacter.transform.position;
+                gameplayRotation = playerCharacter.transform.rotation;
+                Debug.Log($"Gameplay position set from current character position: {gameplayPosition}");
+            }
+            
+            // Enable gameplay systems immediately (this will teleport player and enable all systems)
+            EnableGameplay();
+            
+            // Immediately start gameplay loop
+            if (floodManager != null)
+            {
+                Debug.Log("Starting gameplay loop on restart...");
+                floodManager.StartGameplayLoop();
+            }
+            else
+            {
+                Debug.LogError("[GameplayToCutsceneManager2] FloodManager not assigned! Cannot start gameplay loop.");
+            }
+            
+            // Reset the restarting flag
+            GameOverManager.IsRestarting = false;
+            
+            // Mark game as started
+            gameStarted = true;
+            
+            return; // Exit early - don't run normal cutscene setup
+        }
+        
+        // Normal first-time play flow
         // Đảm bảo timeline director có timeline
         if (timelineDirector && cutsceneTimeline)
         {
