@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0b828cb759e39534cab22fd7fa5d2982
+timeCreated: 1428878282
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 34938
+  packageName: Rain Maker - 2D and 3D Rain Particle System for Unity
+  packageVersion: 2.1.2
+  assetPath: Assets/RainMaker/Prefab/RainShader.shader
+  uploadId: 500403
