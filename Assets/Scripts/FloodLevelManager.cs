@@ -18,6 +18,16 @@ public class FloodLevelManager : MonoBehaviour
         [Tooltip("Level name displayed in UI (e.g., 'Day 1', 'Day 2')")]
         public string levelName = "Level 1";
         
+        [Tooltip("Story text shown before level starts (displayed in level start panel).")]
+        [TextArea(3, 5)]
+        public string startMessage = "The flood is rising...";
+        
+        [Tooltip("Water color for this level (mood/atmosphere).")]
+        public Color waterColor = Color.blue;
+        
+        [Tooltip("Sky/lighting color for this level (mood/atmosphere).")]
+        public Color skyColor = Color.cyan;
+        
         [Tooltip("Speed at which water rises (flood level progression speed)")]
         public float waterRisingSpeed = 1f;
         
@@ -45,6 +55,19 @@ public class FloodLevelManager : MonoBehaviour
     [Tooltip("Text component to display the current leak count.")]
     public TextMeshProUGUI leakCountText;
     
+    [Tooltip("Panel shown at the start of each level (blocks input, shows story message).")]
+    public GameObject levelStartPanel;
+    
+    [Tooltip("Text component that displays the level start message/story.")]
+    public TextMeshProUGUI levelMessageText;
+    
+    [Header("Environment References")]
+    [Tooltip("Water material to apply color changes (for mood/atmosphere).")]
+    public Material waterMaterial;
+    
+    [Tooltip("Directional light to apply sky color changes (for mood/atmosphere).")]
+    public Light directionalLight;
+    
     [Header("Level Data")]
     [Tooltip("List of 12 levels with their configurations.")]
     public List<LevelData> allLevels = new List<LevelData>();
@@ -61,6 +84,7 @@ public class FloodLevelManager : MonoBehaviour
     private float levelStartTime = 0f;
     private int leaksRepairedThisLevel = 0;
     private bool isLevelActive = false;
+    private bool isLevelPaused = false; // Paused during level start message
     private Coroutine leakActivationCoroutine = null;
     private Coroutine waterRisingCoroutine = null;
     
@@ -70,6 +94,11 @@ public class FloodLevelManager : MonoBehaviour
         if (leakCountText != null)
         {
             leakCountText.gameObject.SetActive(false);
+        }
+        
+        if (levelStartPanel != null)
+        {
+            levelStartPanel.SetActive(false);
         }
     }
     
@@ -99,8 +128,19 @@ public class FloodLevelManager : MonoBehaviour
     
     private void Update()
     {
-        // Check win condition if level is active
-        if (isLevelActive)
+        // Safety check: If level start panel is active, ensure cursor stays unlocked
+        if (levelStartPanel != null && levelStartPanel.activeSelf)
+        {
+            // Force unlock cursor in case player controller or other scripts try to lock it
+            if (Cursor.lockState != CursorLockMode.None)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+        
+        // Check win condition if level is active and not paused
+        if (isLevelActive && !isLevelPaused)
         {
             CheckWinCondition();
         }
@@ -221,7 +261,8 @@ public class FloodLevelManager : MonoBehaviour
         // Reset level state
         levelStartTime = Time.time;
         leaksRepairedThisLevel = 0;
-        isLevelActive = true;
+        isLevelActive = false; // Will be set to true after player confirms start
+        isLevelPaused = true; // Pause until player clicks start
         
         // Stop any existing coroutines
         if (leakActivationCoroutine != null)
@@ -253,6 +294,104 @@ public class FloodLevelManager : MonoBehaviour
         // Get current level data
         LevelData currentLevel = allLevels[index];
         
+        // PAUSE GAME LOGIC - Show level start message
+        Time.timeScale = 0f; // Freeze time
+        
+        // FORCE UNLOCK CURSOR FIRST (before showing panel, to prevent other scripts from locking it)
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        // Show level start panel
+        if (levelStartPanel != null)
+        {
+            levelStartPanel.SetActive(true);
+        }
+        
+        // Set story message text
+        if (levelMessageText != null)
+        {
+            levelMessageText.text = currentLevel.startMessage;
+        }
+        else
+        {
+            Debug.LogWarning("[FloodLevelManager] LevelMessageText not assigned! Story message will not display.");
+        }
+        
+        // Apply environment changes (water color and sky color)
+        ApplyEnvironmentChanges(currentLevel);
+        
+        // Ensure cursor stays unlocked (safety check)
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        Debug.Log($"[FloodLevelManager] Level {index + 1} ready. Waiting for player to confirm start...");
+    }
+    
+    /// <summary>
+    /// Applies environment changes (water color and sky color) from level data.
+    /// </summary>
+    private void ApplyEnvironmentChanges(LevelData levelData)
+    {
+        // Apply water color
+        if (waterMaterial != null)
+        {
+            waterMaterial.color = levelData.waterColor;
+            Debug.Log($"[FloodLevelManager] Applied water color: {levelData.waterColor}");
+        }
+        else
+        {
+            Debug.LogWarning("[FloodLevelManager] WaterMaterial not assigned! Water color will not change.");
+        }
+        
+        // Apply sky/lighting color
+        if (directionalLight != null)
+        {
+            directionalLight.color = levelData.skyColor;
+            Debug.Log($"[FloodLevelManager] Applied sky color: {levelData.skyColor}");
+        }
+        else
+        {
+            Debug.LogWarning("[FloodLevelManager] DirectionalLight not assigned! Sky color will not change.");
+        }
+    }
+    
+    /// <summary>
+    /// Called from UI "START" button to confirm level start and begin gameplay.
+    /// Hides level start panel and unpauses the game.
+    /// </summary>
+    public void ConfirmStartLevel()
+    {
+        if (!isLevelPaused)
+        {
+            Debug.LogWarning("[FloodLevelManager] ConfirmStartLevel called but level is not paused!");
+            return;
+        }
+        
+        Debug.Log("[FloodLevelManager] Player confirmed level start. Beginning gameplay...");
+        
+        // Hide level start panel FIRST
+        if (levelStartPanel != null)
+        {
+            levelStartPanel.SetActive(false);
+        }
+        
+        // LOCK CURSOR FOR GAMEPLAY (before unfreezing time)
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        // Unfreeze time
+        Time.timeScale = 1f;
+        
+        // Unpause level
+        isLevelPaused = false;
+        isLevelActive = true;
+        
+        // Reset level start time (now that gameplay actually begins)
+        levelStartTime = Time.time;
+        
+        // Get current level data
+        LevelData currentLevel = allLevels[currentLevelIndex];
+        
         // Start leak activation system
         leakActivationCoroutine = StartCoroutine(LeakActivationLoop(currentLevel));
         
@@ -261,6 +400,8 @@ public class FloodLevelManager : MonoBehaviour
         
         // Initial UI update
         UpdateLeakUI();
+        
+        Debug.Log("[FloodLevelManager] Gameplay started!");
     }
     
     /// <summary>
@@ -283,13 +424,13 @@ public class FloodLevelManager : MonoBehaviour
     /// </summary>
     private IEnumerator LeakActivationLoop(LevelData levelData)
     {
-        while (isLevelActive)
+        while (isLevelActive && !isLevelPaused)
         {
             // Wait a random interval before activating next leak
             float waitTime = Random.Range(3f, 8f);
             yield return new WaitForSeconds(waitTime);
             
-            if (!isLevelActive) break;
+            if (!isLevelActive || isLevelPaused) break;
             
             // Count currently active leaks
             int activeCount = GetActiveLeakCount();
@@ -327,11 +468,11 @@ public class FloodLevelManager : MonoBehaviour
         int currentWaterLevel = 0;
         float timeBetweenLevels = 5f / levelData.waterRisingSpeed; // Adjust based on rising speed
         
-        while (isLevelActive)
+        while (isLevelActive && !isLevelPaused)
         {
             yield return new WaitForSeconds(timeBetweenLevels);
             
-            if (!isLevelActive) break;
+            if (!isLevelActive || isLevelPaused) break;
             
             // Progressively increase water level
             currentWaterLevel++;
@@ -438,7 +579,7 @@ public class FloodLevelManager : MonoBehaviour
     
     /// <summary>
     /// Called from UI button to proceed to the next level.
-    /// Hides victory panel and starts next level.
+    /// Hides victory panel and starts next level (which will show level start message).
     /// </summary>
     public void NextLevel()
     {
@@ -448,10 +589,7 @@ public class FloodLevelManager : MonoBehaviour
             GameOverManager.Instance.victoryPanel.SetActive(false);
         }
         
-        // Unfreeze time
-        Time.timeScale = 1f;
-        
-        // Start next level
+        // Start next level (will show level start message and pause)
         StartLevel(currentLevelIndex + 1);
     }
 }
