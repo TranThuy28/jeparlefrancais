@@ -25,10 +25,6 @@ public class Tutor : MonoBehaviour
                 ShowCurrentMessage();
             }
         }
-        else
-        {
-            tutorText.gameObject.SetActive(false);
-        }
     }
     private void ShowCurrentMessage()
     {
