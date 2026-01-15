@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c8c162af3fac7f145b8d1295eff18b1c
+timeCreated: 1447985660
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 34938
+  packageName: Rain Maker - 2D and 3D Rain Particle System for Unity
+  packageVersion: 2.1.2
+  assetPath: Assets/RainMaker/Prefab/RainMaterial2D.mat
+  uploadId: 500403
